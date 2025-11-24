@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WAR.MARKET — riskHYPE Vault</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .top-bar {
+            background: var(--dark-panel);
+            border-bottom: 1px solid rgba(2, 255, 129, 0.2);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .top-bar-left {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--neon-green);
+            text-transform: uppercase;
+        }
+
+        .top-bar-center {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--neon-green);
+        }
+
+        .vault-container {
+            padding: 32px 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .vault-header {
+            margin-bottom: 48px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(2, 255, 129, 0.2);
+        }
+
+        .vault-header h1 {
+            font-size: 32px;
+            color: var(--neon-green);
+            margin-bottom: 8px;
+        }
+
+        .vault-header p {
+            color: var(--text-secondary);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+        }
+
+        .vault-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .vault-warning {
+            margin-top: 16px;
+            padding: 12px;
+            background: rgba(244, 201, 93, 0.1);
+            border: 1px solid rgba(244, 201, 93, 0.3);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--amber);
+            text-align: center;
+        }
+
+        .deposit-withdraw-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-bottom: 48px;
+        }
+
+        @media (max-width: 768px) {
+            .deposit-withdraw-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .deposit-box,
+        .withdraw-box {
+            background: var(--dark-panel);
+            border: 1px solid rgba(2, 255, 129, 0.2);
+            padding: 24px;
+        }
+
+        .deposit-box h3,
+        .withdraw-box h3 {
+            font-size: 16px;
+            color: var(--neon-green);
+            margin-bottom: 16px;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        .balance-list {
+            margin-top: 16px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+        }
+
+        .balance-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(2, 255, 129, 0.1);
+        }
+
+        .balance-item:last-child {
+            border-bottom: none;
+        }
+
+        .balance-label {
+            color: var(--text-secondary);
+        }
+
+        .balance-value {
+            color: var(--neon-green);
+            font-weight: 600;
+        }
+
+        .info-text {
+            margin-top: 16px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-family: 'IBM Plex Mono', monospace;
+            line-height: 1.6;
+        }
+
+        .withdraw-collapsed {
+            display: none;
+        }
+
+        .withdraw-expanded {
+            display: block;
+        }
+
+        .collapse-toggle {
+            background: transparent;
+            border: 1px solid rgba(2, 255, 129, 0.3);
+            color: var(--neon-green);
+            padding: 12px 24px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .collapse-toggle:hover {
+            background: rgba(2, 255, 129, 0.1);
+        }
+
+        .activity-section {
+            margin-top: 48px;
+        }
+
+        .activity-section h2 {
+            font-size: 20px;
+            color: var(--neon-green);
+            margin-bottom: 16px;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="map-background"></div>
+    <div class="scan-line"></div>
+    <!-- Subtle scanning label -->
+    <div class="scanning-label" style="top: 80px; right: 50px;">VAULT STATUS: OPERATIONAL</div>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="top-bar-left">WAR.MARKET</div>
+        <div class="top-bar-center">
+            <a href="terminal.html" class="nav-link">Markets</a>
+            <a href="vault.html" class="nav-link active">riskHYPE</a>
+            <a href="#" class="nav-link">Points</a>
+            <a href="#" class="nav-link">$RISK</a>
+        </div>
+        <div>
+            <button class="btn">CONNECT WALLET</button>
+        </div>
+    </div>
+
+    <!-- Vault Container -->
+    <div class="vault-container">
+        <div class="vault-header">
+            <h1>riskHYPE</h1>
+            <p>Stake HYPE. Earn Points. Power the System.</p>
+        </div>
+
+        <!-- Vault Metrics Grid -->
+        <div class="vault-grid">
+            <div class="metric-box">
+                <div class="metric-label">Total HYPE Staked</div>
+                <div class="metric-value">268,314</div>
+                <div class="metric-bar">
+                    <div class="metric-bar-fill" style="width: 53.66%;"></div>
+                </div>
+            </div>
+
+            <div class="metric-box">
+                <div class="metric-label">Minimum Required</div>
+                <div class="metric-value">500,000</div>
+                <div class="metric-bar">
+                    <div class="metric-bar-fill" style="width: 100%; background: var(--amber);"></div>
+                </div>
+            </div>
+
+            <div class="metric-box">
+                <div class="metric-label">Vault Buffer</div>
+                <div class="metric-value">168,314</div>
+                <div class="metric-bar">
+                    <div class="metric-bar-fill" style="width: 33.66%; background: var(--alert-red);"></div>
+                </div>
+            </div>
+
+            <div class="metric-box">
+                <div class="metric-label">Unbonding Delay</div>
+                <div class="metric-value">7.5 days</div>
+                <div class="metric-bar">
+                    <div class="metric-bar-fill" style="width: 100%;"></div>
+                </div>
+            </div>
+
+            <div class="metric-box">
+                <div class="metric-label">APY (base)</div>
+                <div class="metric-value">4.2%</div>
+                <div class="metric-bar">
+                    <div class="metric-bar-fill" style="width: 42%;"></div>
+                </div>
+            </div>
+
+            <div class="metric-box">
+                <div class="metric-label">Points Multiplier</div>
+                <div class="metric-value">+50%</div>
+                <div class="text-small" style="margin-top: 8px; color: var(--amber);">(early staker)</div>
+            </div>
+        </div>
+
+        <div class="vault-warning">
+            withdrawals paused if vault &lt; 500,000 HYPE
+        </div>
+
+        <!-- Deposit / Withdraw Section -->
+        <div class="deposit-withdraw-section">
+            <!-- Deposit Box -->
+            <div class="deposit-box">
+                <h3>DEPOSIT</h3>
+                
+                <div style="margin-bottom: 16px;">
+                    <label class="text-small" style="display: block; margin-bottom: 8px;">Amount</label>
+                    <input type="text" class="input" placeholder="0.00 HYPE" style="margin-bottom: 16px;">
+                    <button class="btn btn-primary" style="width: 100%;">STAKE → MINT RISKHYPE</button>
+                </div>
+
+                <div class="balance-list">
+                    <div class="balance-item">
+                        <span class="balance-label">HYPE:</span>
+                        <span class="balance-value">0</span>
+                    </div>
+                    <div class="balance-item">
+                        <span class="balance-label">riskHYPE:</span>
+                        <span class="balance-value">0</span>
+                    </div>
+                    <div class="balance-item">
+                        <span class="balance-label">Points:</span>
+                        <span class="balance-value">0</span>
+                    </div>
+                </div>
+
+                <div class="info-text">
+                    Earn points every hour your stake remains active.
+                </div>
+            </div>
+
+            <!-- Withdraw Box -->
+            <div class="withdraw-box">
+                <h3>WITHDRAW</h3>
+                
+                <button class="collapse-toggle" onclick="toggleWithdraw()">WITHDRAW</button>
+                
+                <div id="withdrawContent" class="withdraw-collapsed" style="margin-top: 16px;">
+                    <div style="margin-bottom: 16px;">
+                        <label class="text-small" style="display: block; margin-bottom: 8px;">Amount</label>
+                        <input type="text" class="input" placeholder="0.00 riskHYPE" style="margin-bottom: 16px;">
+                        <button class="btn btn-short" style="width: 100%;">EXIT → QUEUE UNBONDING</button>
+                    </div>
+                    
+                    <div class="info-text">
+                        Withdrawals process after unbonding + vault above minimum.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Feed -->
+        <div class="activity-section">
+            <h2>VAULT ACTIVITY</h2>
+            <div class="activity-feed">
+                <div class="activity-item">+ 2,500 HYPE staked</div>
+                <div class="activity-item">- 300 HYPE withdrawal queued</div>
+                <div class="activity-item">stressHYPE reward multiplier increased</div>
+                <div class="activity-item">points batch credited</div>
+                <div class="activity-item">+ 1,200 HYPE staked</div>
+                <div class="activity-item">+ 850 HYPE staked</div>
+                <div class="activity-item">vault buffer updated: 168,314 HYPE</div>
+                <div class="activity-item">- 500 HYPE withdrawal queued</div>
+                <div class="activity-item">+ 3,100 HYPE staked</div>
+                <div class="activity-item">points batch credited</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleWithdraw() {
+            const content = document.getElementById('withdrawContent');
+            if (content.classList.contains('withdraw-collapsed')) {
+                content.classList.remove('withdraw-collapsed');
+                content.classList.add('withdraw-expanded');
+            } else {
+                content.classList.remove('withdraw-expanded');
+                content.classList.add('withdraw-collapsed');
+            }
+        }
+    </script>
+</body>
+</html>
+

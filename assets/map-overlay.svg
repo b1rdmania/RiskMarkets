@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" style="opacity: 0.15;">
+  <!-- World map silhouette - simplified continents -->
+  <g fill="none" stroke="rgba(2,255,129,0.2)" stroke-width="0.5">
+    <!-- Trade corridors / energy routes -->
+    <path d="M200,200 Q400,150 600,180 T1000,200" class="corridor" stroke="rgba(2,255,129,0.3)" stroke-width="1"/>
+    <path d="M300,300 Q500,280 700,300 T1100,320" class="corridor" stroke="rgba(244,201,93,0.25)" stroke-width="0.8"/>
+    <path d="M150,400 Q450,380 750,400 T1150,420" class="corridor" stroke="rgba(2,255,129,0.2)" stroke-width="0.7"/>
+    <!-- Vertical routes -->
+    <path d="M400,100 Q420,300 440,500" class="corridor" stroke="rgba(2,255,129,0.25)" stroke-width="0.6"/>
+    <path d="M800,80 Q820,300 840,520" class="corridor" stroke="rgba(244,201,93,0.2)" stroke-width="0.6"/>
+  </g>
+  
+  <!-- Data nodes / connection points -->
+  <g fill="rgba(2,255,129,0.3)">
+    <circle cx="200" cy="200" r="2" class="node"/>
+    <circle cx="400" cy="150" r="1.5" class="node"/>
+    <circle cx="600" cy="180" r="2" class="node"/>
+    <circle cx="800" cy="200" r="1.5" class="node"/>
+    <circle cx="1000" cy="200" r="2" class="node"/>
+    <circle cx="300" cy="300" r="1.5" class="node"/>
+    <circle cx="700" cy="300" r="2" class="node"/>
+    <circle cx="400" cy="400" r="1.5" class="node"/>
+    <circle cx="800" cy="420" r="2" class="node"/>
+  </g>
+  
+  <!-- Lat/long grid lines -->
+  <g stroke="rgba(2,255,129,0.08)" stroke-width="0.3" fill="none">
+    <!-- Horizontal lines -->
+    <line x1="0" y1="150" x2="1200" y2="150"/>
+    <line x1="0" y1="300" x2="1200" y2="300"/>
+    <line x1="0" y1="450" x2="1200" y2="450"/>
+    <!-- Vertical lines -->
+    <line x1="300" y1="0" x2="300" y2="600"/>
+    <line x1="600" y1="0" x2="600" y2="600"/>
+    <line x1="900" y1="0" x2="900" y2="600"/>
+  </g>
+</svg>
+

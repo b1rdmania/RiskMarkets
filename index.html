@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WAR.MARKET — The Global Tension Terminal</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Landing page specific styles */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 40px 24px;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 2;
+            max-width: 800px;
+        }
+
+        .hero .logo {
+            margin-bottom: 24px;
+            font-size: 64px;
+        }
+
+        .tagline {
+            font-size: 20px;
+            color: var(--text-secondary);
+            margin-bottom: 48px;
+            letter-spacing: 0.05em;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        .cta-section {
+            margin: 48px 0;
+        }
+
+        .cta-button {
+            font-size: 16px;
+            padding: 16px 48px;
+            margin-bottom: 16px;
+        }
+
+        .powered-by {
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-family: 'IBM Plex Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .explainer-strip {
+            background: var(--dark-panel);
+            padding: 48px 24px;
+            border-top: 1px solid rgba(2, 255, 129, 0.2);
+            border-bottom: 1px solid rgba(2, 255, 129, 0.2);
+        }
+
+        .explainer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .explainer-item {
+            text-align: center;
+        }
+
+        .explainer-item h3 {
+            color: var(--neon-green);
+            font-size: 18px;
+            margin-bottom: 12px;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        .explainer-item p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .video-section {
+            padding: 80px 24px;
+            text-align: center;
+            background: var(--dark-bg);
+        }
+
+        .video-container {
+            max-width: 1200px;
+            margin: 0 auto 32px;
+            background: var(--dark-panel);
+            border: 1px solid rgba(2, 255, 129, 0.2);
+            padding: 2px;
+            position: relative;
+            aspect-ratio: 16/9;
+        }
+
+        .video-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(2, 255, 129, 0.1) 0%, rgba(244, 201, 93, 0.1) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-placeholder::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(2, 255, 129, 0.05) 10px,
+                rgba(2, 255, 129, 0.05) 20px
+            );
+            animation: diagonal-scan 10s linear infinite;
+        }
+
+        @keyframes diagonal-scan {
+            0% { transform: translate(-50%, -50%) rotate(45deg); }
+            100% { transform: translate(50%, 50%) rotate(45deg); }
+        }
+
+        .video-placeholder-text {
+            position: relative;
+            z-index: 1;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* Video placeholder enhancements */
+        .video-placeholder video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .watch-again-btn {
+            background: transparent;
+            border: 1px solid var(--neon-green);
+            color: var(--neon-green);
+            padding: 10px 24px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .watch-again-btn:hover {
+            background: var(--neon-green);
+            color: var(--dark-bg);
+        }
+
+        .footer {
+            padding: 40px 24px;
+            background: var(--dark-panel);
+            border-top: 1px solid rgba(2, 255, 129, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-left {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--neon-green);
+        }
+
+        .footer-right {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="map-background"></div>
+    <div class="scan-line"></div>
+    <!-- Subtle scanning label -->
+    <div class="scanning-label" style="top: 100px; right: 50px;">SCANNING REGION...</div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="logo">WAR.MARKET</div>
+            <div class="tagline">The Global Tension Terminal.</div>
+            <div class="tagline" style="font-size: 16px; margin-top: -32px;">Synthetic Macro-Stress Indices</div>
+            
+            <div class="cta-section">
+                <a href="terminal.html" class="btn btn-primary cta-button">LAUNCH APP</a>
+                <div class="powered-by">Powered by Hyperliquid HIP-3</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Explainer Strip -->
+    <section class="explainer-strip">
+        <div class="explainer-grid">
+            <div class="explainer-item">
+                <h3>[VOLATILITY INDICES]</h3>
+                <p>Synthetic macro baskets built from neutral data.</p>
+            </div>
+            <div class="explainer-item">
+                <h3>[WAR-ROOM UI]</h3>
+                <p>Deployed on a hacker-style ops terminal.</p>
+            </div>
+            <div class="explainer-item">
+                <h3>[$RISK TOKEN]</h3>
+                <p>Trade → Earn points → Convert to $RISK.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Section -->
+    <section class="video-section">
+        <div class="video-container">
+            <div class="video-placeholder">
+                <div class="video-placeholder-text">
+                    VIDEO PLACEHOLDER<br>
+                    <span style="font-size: 11px; margin-top: 8px; display: block;">10-second loop: Map → Stress → UI → Logo</span>
+                </div>
+            </div>
+        </div>
+        <button class="watch-again-btn">WATCH AGAIN</button>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-left">
+            <span style="color: var(--text-primary);">WAR.MARKET © 2025</span>
+            <a href="#" class="footer-link">About</a>
+            <a href="#" class="footer-link">X</a>
+            <a href="#" class="footer-link">Discord</a>
+            <a href="#" class="footer-link">Docs</a>
+        </div>
+        <div class="footer-right">
+            build v0.1-alpha
+        </div>
+    </footer>
+</body>
+</html>
+
