@@ -10,6 +10,56 @@
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         /* Landing page specific styles */
+        .video-hero {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-hero video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            z-index: 10;
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator-text {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            color: var(--neon-green);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .scroll-indicator-arrow {
+            width: 24px;
+            height: 24px;
+            border-right: 2px solid var(--neon-green);
+            border-bottom: 2px solid var(--neon-green);
+            transform: rotate(45deg);
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
         .hero {
             min-height: 100vh;
             display: flex;
@@ -214,6 +264,17 @@
     <!-- Subtle scanning label -->
     <div class="scanning-label" style="top: 100px; right: 50px;">SCANNING REGION...</div>
 
+    <!-- Video Hero Section (Top) -->
+    <section class="video-hero">
+        <video autoplay loop muted playsinline>
+            <source src="assets/Video_Generation_With_GIF_Added(1).mp4" type="video/mp4">
+        </video>
+        <div class="scroll-indicator">
+            <div class="scroll-indicator-text">Scroll Down</div>
+            <div class="scroll-indicator-arrow"></div>
+        </div>
+    </section>
+
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
@@ -244,16 +305,6 @@
                 <p>Trade → Earn points → Convert to $RISK.</p>
             </div>
         </div>
-    </section>
-
-    <!-- Video Section -->
-    <section class="video-section">
-        <div class="video-container">
-            <video autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover;">
-                <source src="assets/Video_Brief_for_WARMARKET.mp4" type="video/mp4">
-            </video>
-        </div>
-        <button class="watch-again-btn" onclick="document.querySelector('video').play()">WATCH AGAIN</button>
     </section>
 
     <!-- Footer -->
