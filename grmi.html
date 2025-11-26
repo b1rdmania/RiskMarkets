@@ -54,15 +54,16 @@
         }
 
         .page-container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 48px 24px;
         }
 
         .page-header {
-            margin-bottom: 48px;
+            margin-bottom: 32px;
             padding-bottom: 24px;
             border-bottom: 1px solid rgba(2, 255, 129, 0.2);
+            position: relative;
         }
 
         .page-header h1 {
@@ -78,12 +79,146 @@
             line-height: 1.6;
         }
 
-        .section {
+        .live-pill {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--dark-panel);
+            border: 1px solid var(--neon-green);
+            padding: 8px 16px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--neon-green);
+            text-transform: uppercase;
+        }
+
+        .live-pill .dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: var(--neon-green);
+            border-radius: 50%;
+            margin-right: 6px;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .metrics-trading-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 32px;
             margin-bottom: 48px;
         }
 
+        @media (max-width: 968px) {
+            .metrics-trading-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .live-metrics {
+            background: var(--dark-panel);
+            border: 1px solid rgba(2, 255, 129, 0.2);
+            padding: 24px;
+        }
+
+        .metrics-row {
+            display: flex;
+            gap: 32px;
+            margin-bottom: 16px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            flex-wrap: wrap;
+        }
+
+        .metric-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .metric-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--neon-green);
+        }
+
+        .metric-value.negative {
+            color: var(--alert-red);
+        }
+
+        .sparkline-container {
+            margin: 24px 0;
+            height: 60px;
+        }
+
+        .sparkline-large {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-green) 0%, var(--amber) 50%, var(--neon-green) 100%);
+            opacity: 0.6;
+            position: relative;
+        }
+
+        .stress-bar-large {
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(90deg, var(--neon-green) 0%, var(--amber) 50%, var(--alert-red) 100%);
+            position: relative;
+            margin: 16px 0;
+        }
+
+        .stress-indicator-large {
+            position: absolute;
+            width: 30%;
+            height: 100%;
+            background: var(--neon-green);
+            opacity: 0.9;
+        }
+
+        .stress-label-large {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            color: var(--neon-green);
+            margin-top: 8px;
+        }
+
+        .trading-panel {
+            background: var(--dark-panel);
+            border: 1px solid rgba(2, 255, 129, 0.2);
+            padding: 24px;
+        }
+
+        .trading-panel h3 {
+            font-size: 14px;
+            color: var(--neon-green);
+            margin-bottom: 16px;
+            font-family: 'IBM Plex Mono', monospace;
+            text-transform: uppercase;
+        }
+
+        .section {
+            margin-bottom: 32px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid rgba(2, 255, 129, 0.1);
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
         .section h2 {
-            font-size: 20px;
+            font-size: 18px;
             color: var(--neon-green);
             margin-bottom: 16px;
             font-family: 'IBM Plex Mono', monospace;
@@ -92,24 +227,63 @@
         }
 
         .section p {
-            color: var(--text-secondary);
-            line-height: 1.8;
-            margin-bottom: 16px;
+            color: #C8C8C8;
+            line-height: 1.6;
+            margin-bottom: 12px;
             font-family: 'IBM Plex Mono', monospace;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .section ul {
-            color: var(--text-secondary);
+            color: #C8C8C8;
             line-height: 1.8;
-            margin-left: 24px;
-            margin-bottom: 16px;
+            margin-left: 20px;
+            margin-bottom: 12px;
             font-family: 'IBM Plex Mono', monospace;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .section li {
-            margin-bottom: 8px;
+            margin-bottom: 6px;
+        }
+
+        .composition-grid {
+            margin-top: 16px;
+        }
+
+        .composition-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 12px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+        }
+
+        .composition-label {
+            min-width: 150px;
+            color: var(--text-secondary);
+        }
+
+        .composition-bar {
+            flex: 1;
+            height: 20px;
+            background: rgba(2, 255, 129, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .composition-bar-fill {
+            height: 100%;
+            background: var(--neon-green);
+            opacity: 0.8;
+        }
+
+        .composition-percent {
+            min-width: 50px;
+            text-align: right;
+            color: var(--neon-green);
+            font-weight: 600;
         }
 
         .back-link {
@@ -124,40 +298,6 @@
 
         .back-link:hover {
             opacity: 0.7;
-        }
-
-        .stress-bar-container {
-            margin: 24px 0;
-        }
-
-        .stress-bar-text {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-        }
-
-        .stress-bar-visual {
-            width: 100%;
-            height: 8px;
-            background: linear-gradient(90deg, var(--neon-green) 0%, var(--amber) 50%, var(--alert-red) 100%);
-            position: relative;
-            margin: 8px 0;
-        }
-
-        .stress-indicator {
-            position: absolute;
-            width: 30%;
-            height: 100%;
-            background: var(--neon-green);
-            opacity: 0.8;
-        }
-
-        .stress-label {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 12px;
-            color: var(--neon-green);
-            margin-top: 4px;
         }
     </style>
 </head>
@@ -183,69 +323,137 @@
         <!-- Page Header -->
         <div class="page-header">
             <h1>GRMI — Global Risk Momentum Index</h1>
-            <p class="subtitle">A composite index tracking global stress, volatility flow, and safe-haven demand.</p>
-        </div>
-
-        <!-- Overview Section -->
-        <div class="section">
-            <h2>OVERVIEW</h2>
-            <p>GRMI condenses broad global volatility into a single synthetic metric.</p>
-            <p>It blends metals, FX volatility, global indices, and safe-haven flows.</p>
-            <p>It measures stress momentum, not geopolitical events.</p>
-        </div>
-
-        <!-- Index Composition Section -->
-        <div class="section">
-            <h2>INDEX COMPOSITION</h2>
-            <p><strong>INDEX COMPONENTS</strong></p>
-            <ul>
-                <li>30% Gold (Pyth feed)</li>
-                <li>25% USD Index Proxy</li>
-                <li>20% Global Volatility Basket</li>
-                <li>15% CHF (Pyth feed)</li>
-                <li>10% Broad Commodities Proxy</li>
-            </ul>
-            <p><strong>UPDATE CYCLE</strong></p>
-            <p>2.5 seconds</p>
-            <p><strong>FALLBACK LOGIC</strong></p>
-            <p>Median of last 3 updates</p>
-            <p><strong>HIP-3 STATUS</strong></p>
-            <p>Compliant</p>
-        </div>
-
-        <!-- Stress Level Section -->
-        <div class="section">
-            <h2>STRESS LEVEL</h2>
-            <div class="stress-bar-container">
-                <div class="stress-bar-visual">
-                    <div class="stress-indicator"></div>
-                </div>
-                <div class="stress-label">STRESS LEVEL: LOW</div>
+            <p class="subtitle">A composite index tracking global risk and safe-haven momentum.</p>
+            <div class="live-pill">
+                <span class="dot"></span>LIVE • Updated 2.5s ago
             </div>
         </div>
 
-        <!-- Why This Index Matters Section -->
-        <div class="section">
-            <h2>WHY THIS INDEX MATTERS</h2>
-            <p>Global volatility shifts through metals, FX, commodity demand, and risk-off flows.</p>
-            <p>GRMI packages these movements into a readable, tradeable composite.</p>
+        <!-- Live Metrics + Trading Panel Grid -->
+        <div class="metrics-trading-grid">
+            <!-- Live Metrics Block -->
+            <div class="live-metrics">
+                <div class="metrics-row">
+                    <div class="metric-item">
+                        <div class="metric-label">PRICE</div>
+                        <div class="metric-value">$72.15</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">24H</div>
+                        <div class="metric-value negative">-0.23%</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">VOLUME</div>
+                        <div class="metric-value">$2.14M</div>
+                    </div>
+                </div>
+                
+                <div class="sparkline-container">
+                    <div class="sparkline-large"></div>
+                </div>
+
+                <div>
+                    <div class="metric-label" style="margin-bottom: 8px;">STRESS LEVEL</div>
+                    <div class="stress-bar-large">
+                        <div class="stress-indicator-large"></div>
+                    </div>
+                    <div class="stress-label-large">LOW</div>
+                </div>
+            </div>
+
+            <!-- Trading Panel -->
+            <div class="trading-panel">
+                <h3>ORDER</h3>
+                <div style="margin-bottom: 16px;">
+                    <label class="text-small" style="display: block; margin-bottom: 8px;">Amount</label>
+                    <input type="text" class="input" placeholder="0.00" style="margin-bottom: 16px;">
+                    <label class="text-small" style="display: block; margin-bottom: 8px;">Leverage</label>
+                    <input type="range" min="1" max="10" value="1" class="input" style="width: 100%; margin-bottom: 8px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-secondary); margin-bottom: 16px;">
+                        <span>1×</span>
+                        <span>10×</span>
+                    </div>
+                    <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">
+                        Funding: <span style="color: var(--alert-red);">-0.01%</span>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-long" style="flex: 1;">LONG GRMI</button>
+                    <button class="btn btn-short" style="flex: 1;">SHORT GRMI</button>
+                </div>
+            </div>
         </div>
 
-        <!-- Trading Model Section -->
+        <!-- Index Composition -->
         <div class="section">
-            <h2>TRADING MODEL</h2>
+            <h2>INDEX COMPOSITION</h2>
+            <div class="composition-grid">
+                <div class="composition-item">
+                    <div class="composition-label">Gold</div>
+                    <div class="composition-bar">
+                        <div class="composition-bar-fill" style="width: 30%;"></div>
+                    </div>
+                    <div class="composition-percent">30%</div>
+                </div>
+                <div class="composition-item">
+                    <div class="composition-label">USD Index</div>
+                    <div class="composition-bar">
+                        <div class="composition-bar-fill" style="width: 25%;"></div>
+                    </div>
+                    <div class="composition-percent">25%</div>
+                </div>
+                <div class="composition-item">
+                    <div class="composition-label">Global Vol Basket</div>
+                    <div class="composition-bar">
+                        <div class="composition-bar-fill" style="width: 20%;"></div>
+                    </div>
+                    <div class="composition-percent">20%</div>
+                </div>
+                <div class="composition-item">
+                    <div class="composition-label">CHF</div>
+                    <div class="composition-bar">
+                        <div class="composition-bar-fill" style="width: 15%;"></div>
+                    </div>
+                    <div class="composition-percent">15%</div>
+                </div>
+                <div class="composition-item">
+                    <div class="composition-label">Commodities Proxy</div>
+                    <div class="composition-bar">
+                        <div class="composition-bar-fill" style="width: 10%;"></div>
+                    </div>
+                    <div class="composition-percent">10%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overview -->
+        <div class="section">
+            <h2>OVERVIEW</h2>
+            <p>GRMI tracks global volatility flow and safe-haven demand.</p>
+            <p>It blends metals, FX, and broad volatility metrics into one index.</p>
+        </div>
+
+        <!-- Why This Index Matters -->
+        <div class="section">
+            <h2>WHY THIS INDEX MATTERS</h2>
+            <p>Global markets move together when fear rises.</p>
+            <p>GRMI provides a simple way to trade this shift.</p>
+        </div>
+
+        <!-- How It Works -->
+        <div class="section">
+            <h2>HOW IT WORKS</h2>
             <ul>
-                <li>GRMI is deployed as a HIP-3 perpetual market.</li>
-                <li>Trading occurs on Hyperliquid's front end.</li>
-                <li>WAR.MARKET adds the narrative UI.</li>
+                <li>HIP-3 perpetual on Hyperliquid</li>
+                <li>Neutral feed composition</li>
+                <li>Styled by WAR.MARKET</li>
             </ul>
         </div>
 
-        <!-- Powered By Section -->
+        <!-- Powered By -->
         <div class="section">
             <h2>POWERED BY RISKHYPE</h2>
-            <p>GRMI relies on staked HYPE to remain active.</p>
-            <p>riskHYPE stakers earn points and future $RISK rewards.</p>
+            <p>Supported by staked HYPE from the riskHYPE vault.</p>
         </div>
 
         <!-- Back Link -->
@@ -253,4 +461,3 @@
     </div>
 </body>
 </html>
-
