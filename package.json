@@ -1,0 +1,22 @@
+{
+  "name": "warmarket",
+  "version": "0.1.0",
+  "description": "WAR.MARKET — The Global Tension Terminal",
+  "scripts": {
+    "dev": "npx serve .",
+    "start": "npx serve ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/b1rdmania/RiskMarkets"
+  },
+  "keywords": [
+    "defi",
+    "hyperliquid",
+    "trading",
+    "terminal"
+  ],
+  "author": "",
+  "license": "MIT"
+}
+

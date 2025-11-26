@@ -95,9 +95,20 @@ The `assets/` folder contains:
 - Glitch effects on hover
 - Button hover transitions
 
+## Deployment
+
+Ready to deploy to Vercel! See [DEPLOYMENT.md](DEPLOYMENT.md) for full instructions.
+
+### Quick Deploy
+
+1. Push to GitHub
+2. Go to [vercel.com](https://vercel.com) → Import Project
+3. Select `b1rdmania/RiskMarkets`
+4. Deploy!
+
 ## Next Steps
 
-- Replace video placeholder with actual 10-second video
+- Deploy to Vercel (see DEPLOYMENT.md)
 - Add real sparkline data/graphs
 - Connect wallet integration (static for now)
 - Refine animations and transitions
@@ -106,5 +117,5 @@ The `assets/` folder contains:
 ---
 
 **Build**: v0.1-alpha  
-**Status**: Ready for design review and stakeholder presentation
+**Status**: Ready for deployment and stakeholder presentation
 
