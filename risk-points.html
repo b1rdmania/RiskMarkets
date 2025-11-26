@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WAR.MARKET — $RISK & POINTS</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .top-bar {
+            background: var(--dark-panel);
+            border-bottom: 1px solid rgba(2, 255, 129, 0.2);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .top-bar-left {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--neon-green);
+            text-transform: uppercase;
+        }
+
+        .top-bar-center {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--neon-green);
+        }
+
+        .page-container {
+            padding: 48px 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            margin-bottom: 48px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(2, 255, 129, 0.2);
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            color: var(--neon-green);
+            margin-bottom: 8px;
+        }
+
+        .page-header .subtitle {
+            color: var(--text-secondary);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-bottom: 48px;
+        }
+
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .content-section {
+            background: var(--dark-panel);
+            border: 1px solid rgba(2, 255, 129, 0.2);
+            padding: 24px;
+        }
+
+        .content-section h2 {
+            font-size: 18px;
+            color: var(--neon-green);
+            margin-bottom: 16px;
+            font-family: 'IBM Plex Mono', monospace;
+            text-transform: uppercase;
+        }
+
+        .content-section h3 {
+            font-size: 14px;
+            color: var(--neon-green);
+            margin-top: 20px;
+            margin-bottom: 12px;
+            font-family: 'IBM Plex Mono', monospace;
+            text-transform: uppercase;
+        }
+
+        .content-section p,
+        .content-section li {
+            color: var(--text-primary);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            line-height: 1.8;
+            margin-bottom: 12px;
+        }
+
+        .content-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .content-section li {
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .content-section li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--neon-green);
+        }
+
+        .content-section .notes {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(2, 255, 129, 0.1);
+        }
+
+        .content-section .notes p {
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-style: italic;
+        }
+
+        .full-width-section {
+            background: var(--dark-panel);
+            border: 1px solid rgba(2, 255, 129, 0.2);
+            padding: 32px;
+            margin-bottom: 48px;
+        }
+
+        .full-width-section h2 {
+            font-size: 18px;
+            color: var(--neon-green);
+            margin-bottom: 16px;
+            font-family: 'IBM Plex Mono', monospace;
+            text-transform: uppercase;
+        }
+
+        .full-width-section p {
+            color: var(--text-primary);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            line-height: 1.8;
+            margin-bottom: 12px;
+        }
+
+        .full-width-section blockquote {
+            border-left: 2px solid var(--neon-green);
+            padding-left: 20px;
+            margin: 24px 0;
+            color: var(--neon-green);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .flow-diagram {
+            margin: 32px 0;
+            padding: 24px;
+            background: rgba(2, 255, 129, 0.05);
+            border: 1px solid rgba(2, 255, 129, 0.2);
+            text-align: center;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            color: var(--neon-green);
+        }
+
+        .flow-diagram::before {
+            content: 'TRADE / STAKE → POINTS → $RISK → FEE SHARE';
+        }
+
+        .points-widget {
+            background: var(--dark-panel);
+            border: 1px solid rgba(2, 255, 129, 0.2);
+            padding: 24px;
+            margin-top: 32px;
+        }
+
+        .points-widget h3 {
+            font-size: 16px;
+            color: var(--neon-green);
+            margin-bottom: 20px;
+            font-family: 'IBM Plex Mono', monospace;
+            text-transform: uppercase;
+        }
+
+        .points-widget-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(2, 255, 129, 0.1);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+        }
+
+        .points-widget-item:last-child {
+            border-bottom: none;
+        }
+
+        .points-widget-label {
+            color: var(--text-secondary);
+        }
+
+        .points-widget-value {
+            color: var(--neon-green);
+            font-weight: 600;
+        }
+
+        .footer {
+            padding: 40px 24px;
+            background: var(--dark-panel);
+            border-top: 1px solid rgba(2, 255, 129, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-left {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--neon-green);
+        }
+
+        .footer-right {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 480px) {
+            .page-container {
+                padding: 32px 16px;
+            }
+
+            .page-header h1 {
+                font-size: 26px;
+            }
+
+            .content-section,
+            .full-width-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="map-background"></div>
+    <div class="scan-line"></div>
+    <!-- Subtle scanning label -->
+    <div class="scanning-label" style="top: 80px; right: 50px;">RISK ENGINE STATUS: ACTIVE</div>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="top-bar-left"><a href="index.html" style="color: var(--neon-green); text-decoration: none;">WAR.MARKET</a></div>
+        <div class="top-bar-center">
+            <a href="terminal.html" class="nav-link">Markets</a>
+            <a href="vault.html" class="nav-link">riskHYPE</a>
+            <a href="risk-points.html" class="nav-link active">RISK & POINTS</a>
+        </div>
+        <div>
+            <button class="btn">CONNECT WALLET</button>
+        </div>
+    </div>
+
+    <!-- Page Container -->
+    <div class="page-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>$RISK & POINTS</h1>
+            <p class="subtitle">Trade, stake, earn exposure to the risk engine.</p>
+        </div>
+
+        <!-- Two Column Layout -->
+        <div class="content-grid">
+            <!-- Section 1 — $RISK (left column) -->
+            <div class="content-section">
+                <h2>WHAT IS $RISK?</h2>
+                <p>$RISK is the token that links the indices, the vault, and the points system.</p>
+                <p>It is a fee-share and incentive token.</p>
+
+                <h3>UTILITY</h3>
+                <ul>
+                    <li>Earn a share of protocol fees when staked</li>
+                    <li>Boost points multipliers</li>
+                    <li>Unlock early access to new indices</li>
+                </ul>
+
+                <div class="notes">
+                    <p>No governance theatre</p>
+                    <p>No meme promises</p>
+                    <p>Tied directly to usage of the markets</p>
+                </div>
+            </div>
+
+            <!-- Section 2 — Points (right column) -->
+            <div class="content-section">
+                <h2>POINTS</h2>
+                <p>Points track how much you use the system.</p>
+                <p>They are earned from:</p>
+                <ul>
+                    <li>Trading volume</li>
+                    <li>Open interest held over time</li>
+                    <li>Short exposure when the market is one-sided</li>
+                    <li>Staking HYPE in the riskHYPE vault</li>
+                </ul>
+
+                <h3>CONVERSION</h3>
+                <p>At TGE, points convert into $RISK.</p>
+                <p>More points → larger share of the initial $RISK allocation.</p>
+            </div>
+        </div>
+
+        <!-- Section 3 — How They Work Together (full-width) -->
+        <div class="full-width-section">
+            <h2>HOW IT FITS</h2>
+            <ul style="list-style: none; padding-left: 0;">
+                <li style="padding-left: 0;">• Trade indices → earn points</li>
+                <li style="padding-left: 0;">• Stake HYPE → earn more points</li>
+                <li style="padding-left: 0;">• Stake $RISK → earn fee-share</li>
+                <li style="padding-left: 0;">• Points → $RISK at launch</li>
+            </ul>
+            <p>One simple loop:</p>
+            <blockquote>
+                Trade and stake → collect points → become an owner of the risk engine.
+            </blockquote>
+            <div class="flow-diagram"></div>
+        </div>
+
+        <!-- Points Dashboard Widget -->
+        <div class="points-widget">
+            <h3>YOUR POINTS</h3>
+            <div class="points-widget-item">
+                <span class="points-widget-label">Points:</span>
+                <span class="points-widget-value">0</span>
+            </div>
+            <div class="points-widget-item">
+                <span class="points-widget-label">Current multiplier:</span>
+                <span class="points-widget-value">1.0×</span>
+            </div>
+            <div class="points-widget-item">
+                <span class="points-widget-label">Next epoch:</span>
+                <span class="points-widget-value">—</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-left">
+            <a href="#" class="footer-link">About</a>
+            <a href="#" class="footer-link">Docs</a>
+            <a href="#" class="footer-link">X</a>
+            <a href="#" class="footer-link">Discord</a>
+        </div>
+        <div class="footer-right">
+            <span>WAR.MARKET © 2025</span>
+        </div>
+    </footer>
+</body>
+</html>
+
