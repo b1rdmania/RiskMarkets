@@ -199,24 +199,6 @@
             51%, 100% { opacity: 0; }
         }
 
-        /* Intel file tooltip style */
-        .index-tooltip {
-            position: absolute;
-            background: var(--dark-panel);
-            border: 1px solid rgba(2, 255, 129, 0.3);
-            padding: 12px;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 11px;
-            color: var(--text-secondary);
-            line-height: 1.6;
-            max-width: 300px;
-            display: none;
-            z-index: 1000;
-        }
-
-        .table tr:hover .index-tooltip {
-            display: block;
-        }
     </style>
 </head>
 <body>
@@ -242,19 +224,17 @@
     <!-- Ticker -->
     <div class="ticker">
         <div class="ticker-content">
-            <span class="ticker-item">ECV ↗ Oil +2.1%</span>
+            <span class="ticker-item">ECV ▴ Oil +2.1%</span>
             <span class="ticker-separator">|</span>
-            <span class="ticker-item">APMS ↗ CNH Vol High</span>
+            <span class="ticker-item">APMS ▴ CNH Vol High</span>
             <span class="ticker-separator">|</span>
-            <span class="ticker-item">GRMI ↗ Safe Haven Demand Rising</span>
+            <span class="ticker-item">GRMI ▴ Safe-Haven Demand Rising</span>
             <span class="ticker-separator">|</span>
-            <span class="ticker-item">EASCS ↘ Freight Costs Down</span>
+            <span class="ticker-item">ECV ▴ Oil +2.1%</span>
             <span class="ticker-separator">|</span>
-            <span class="ticker-item">EUVI → European Stress Stable</span>
+            <span class="ticker-item">APMS ▴ CNH Vol High</span>
             <span class="ticker-separator">|</span>
-            <span class="ticker-item">ECV ↗ Oil +2.1%</span>
-            <span class="ticker-separator">|</span>
-            <span class="ticker-item">APMS ↗ CNH Vol High</span>
+            <span class="ticker-item">GRMI ▴ Safe-Haven Demand Rising</span>
             <span class="ticker-separator">|</span>
         </div>
     </div>
@@ -263,26 +243,26 @@
     <div class="markets-container">
         <div class="markets-header">
             <h1>MARKETS</h1>
-            <p class="text-small">Synthetic Macro-Stress Indices</p>
+            <p class="text-small">Trade synthetic volatility indices built from neutral macro feeds.</p>
         </div>
 
         <div class="markets-table-wrapper">
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Index</th>
-                        <th>Price</th>
-                        <th>24h</th>
-                        <th>Sparkline</th>
-                        <th>Volume</th>
-                        <th>Actions</th>
+                        <th>INDEX</th>
+                        <th>PRICE</th>
+                        <th>24H</th>
+                        <th>SPARKLINE</th>
+                        <th>VOLUME</th>
+                        <th>ACTIONS</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr onclick="openDrawer('ECV')">
+                    <tr style="cursor: pointer;" onclick="window.location.href='ecv.html'">
                         <td>
                             <div class="index-name">ECV</div>
-                            <div class="index-subtitle">Energy Corridor Volatility</div>
+                            <div class="index-subtitle">ENERGY CORRIDOR VOLATILITY</div>
                         </td>
                         <td class="price">$81.22</td>
                         <td class="status-up">+1.47%</td>
@@ -295,10 +275,10 @@
                             </div>
                         </td>
                     </tr>
-                    <tr onclick="openDrawer('APMS')">
+                    <tr style="cursor: pointer;" onclick="window.location.href='apms.html'">
                         <td>
                             <div class="index-name">APMS</div>
-                            <div class="index-subtitle">Asia-Pacific Macro Stress</div>
+                            <div class="index-subtitle">ASIA-PACIFIC MACRO STRESS</div>
                         </td>
                         <td class="price">$54.89</td>
                         <td class="status-up">+0.82%</td>
@@ -311,47 +291,15 @@
                             </div>
                         </td>
                     </tr>
-                    <tr onclick="openDrawer('GRMI')">
+                    <tr style="cursor: pointer;" onclick="window.location.href='grmi.html'">
                         <td>
                             <div class="index-name">GRMI</div>
-                            <div class="index-subtitle">Global Risk Momentum Index</div>
+                            <div class="index-subtitle">GLOBAL RISK MOMENTUM INDEX</div>
                         </td>
                         <td class="price">$72.15</td>
                         <td class="status-down">-0.23%</td>
                         <td><div class="sparkline"></div></td>
                         <td class="text-mono">$2.14M</td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn-action btn-long" onclick="event.stopPropagation()">LONG</button>
-                                <button class="btn-action btn-short" onclick="event.stopPropagation()">SHORT</button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr onclick="openDrawer('EASCS')">
-                        <td>
-                            <div class="index-name">EASCS</div>
-                            <div class="index-subtitle">East Asia Supply Chain Stress</div>
-                        </td>
-                        <td class="price">$38.44</td>
-                        <td class="status-down">-1.12%</td>
-                        <td><div class="sparkline"></div></td>
-                        <td class="text-mono">$456K</td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn-action btn-long" onclick="event.stopPropagation()">LONG</button>
-                                <button class="btn-action btn-short" onclick="event.stopPropagation()">SHORT</button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr onclick="openDrawer('EUVI')">
-                        <td>
-                            <div class="index-name">EUVI</div>
-                            <div class="index-subtitle">European Volatility Index</div>
-                        </td>
-                        <td class="price">$62.78</td>
-                        <td class="status-up">+0.56%</td>
-                        <td><div class="sparkline"></div></td>
-                        <td class="text-mono">$678K</td>
                         <td>
                             <div class="action-buttons">
                                 <button class="btn-action btn-long" onclick="event.stopPropagation()">LONG</button>
@@ -366,9 +314,7 @@
 
     <!-- CLI Visual Prompts -->
     <div class="cli-prompts">
-        <div class="cli-line">> run scan APAC</div>
-        <div class="cli-line">> run stress-model</div>
-        <div class="cli-line">> long ECV -size 1000<span class="cli-cursor"></span></div>
+        <div class="cli-line">> run stress-model<span class="cli-cursor"></span></div>
     </div>
 
     <!-- Bottom Bar -->
@@ -382,126 +328,7 @@
         </div>
     </div>
 
-    <!-- Trading Drawer -->
-    <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
-    <div class="drawer" id="tradingDrawer">
-        <div style="margin-bottom: 24px;">
-            <h2 style="color: var(--neon-green); margin-bottom: 8px;" id="drawerIndex">ECV</h2>
-            <p class="text-small" id="drawerSubtitle">Energy Corridor Volatility</p>
-            <p style="color: var(--amber); font-size: 12px; margin-top: 8px;" id="stressLevel">Stress Level: MEDIUM</p>
-        </div>
-
-        <!-- Chart Placeholder -->
-        <div style="background: var(--dark-surface); height: 300px; border: 1px solid rgba(2, 255, 129, 0.2); margin-bottom: 24px; position: relative; display: flex; align-items: center; justify-content: center;">
-            <div style="color: var(--text-secondary); font-family: 'IBM Plex Mono', monospace; font-size: 12px;">CHART: 1m | 1h | 1d</div>
-        </div>
-
-        <!-- Order Panel -->
-        <div class="panel" style="margin-bottom: 24px;">
-            <h3 style="font-size: 14px; margin-bottom: 16px; color: var(--text-primary);">ORDER</h3>
-            
-            <div style="margin-bottom: 16px;">
-                <label class="text-small" style="display: block; margin-bottom: 8px;">Amount</label>
-                <input type="text" class="input" placeholder="0.00 HYPE" style="margin-bottom: 8px;">
-                <input type="text" class="input" placeholder="or USDC">
-            </div>
-
-            <div style="margin-bottom: 16px;">
-                <label class="text-small" style="display: block; margin-bottom: 8px;">Leverage: <span id="leverageValue">1×</span></label>
-                <input type="range" min="1" max="10" value="1" class="input" style="width: 100%;" id="leverageSlider" oninput="document.getElementById('leverageValue').textContent = this.value + '×'">
-            </div>
-
-            <div style="margin-bottom: 16px; font-size: 12px; color: var(--text-secondary);">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                    <span>Fee:</span>
-                    <span>0.05%</span>
-                </div>
-                <div style="display: flex; justify-content: space-between;">
-                    <span>Funding Estimate:</span>
-                    <span>0.01% / 8h</span>
-                </div>
-            </div>
-
-            <div style="display: flex; gap: 8px;">
-                <button class="btn btn-long" style="flex: 1;">LONG ECV</button>
-                <button class="btn btn-short" style="flex: 1;">SHORT ECV</button>
-            </div>
-        </div>
-
-        <!-- Oracle Breakdown -->
-        <div class="panel" style="margin-bottom: 24px;">
-            <h3 style="font-size: 14px; margin-bottom: 16px; color: var(--text-primary);">INDEX COMPOSITION</h3>
-            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; line-height: 1.8; color: var(--text-secondary);">
-                <div>35% Oil (Pyth)</div>
-                <div>20% NatGas (Pyth)</div>
-                <div>20% Freight Proxy</div>
-                <div>15% Gold (Pyth)</div>
-                <div>10% USD/CHF (Pyth)</div>
-            </div>
-            <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(2, 255, 129, 0.2); font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-secondary);">
-                <div>Update Cycle: 2.5s</div>
-                <div>Last Sync: 00:00:08</div>
-            </div>
-        </div>
-
-        <!-- Stress Bar -->
-        <div>
-            <div class="text-small" style="margin-bottom: 8px;">STRESS LEVEL</div>
-            <div class="stress-bar">
-                <div class="stress-dot"></div>
-            </div>
-        </div>
-    </div>
-
     <script>
-        const indexData = {
-            ECV: {
-                name: 'ECV',
-                subtitle: 'Energy Corridor Volatility',
-                stress: 'MEDIUM'
-            },
-            APMS: {
-                name: 'APMS',
-                subtitle: 'Asia-Pacific Macro Stress',
-                stress: 'HIGH'
-            },
-            GRMI: {
-                name: 'GRMI',
-                subtitle: 'Global Risk Momentum Index',
-                stress: 'LOW'
-            },
-            EASCS: {
-                name: 'EASCS',
-                subtitle: 'East Asia Supply Chain Stress',
-                stress: 'MEDIUM'
-            },
-            EUVI: {
-                name: 'EUVI',
-                subtitle: 'European Volatility Index',
-                stress: 'LOW'
-            }
-        };
-
-        function openDrawer(index) {
-            const drawer = document.getElementById('tradingDrawer');
-            const overlay = document.getElementById('drawerOverlay');
-            const data = indexData[index];
-            
-            document.getElementById('drawerIndex').textContent = data.name;
-            document.getElementById('drawerSubtitle').textContent = data.subtitle;
-            document.getElementById('stressLevel').textContent = `Stress Level: ${data.stress}`;
-            
-            drawer.classList.add('open');
-            overlay.classList.add('active');
-        }
-
-        function closeDrawer() {
-            const drawer = document.getElementById('tradingDrawer');
-            const overlay = document.getElementById('drawerOverlay');
-            drawer.classList.remove('open');
-            overlay.classList.remove('active');
-        }
-
         // Glitch effect every 12 seconds on ticker
         setInterval(() => {
             document.querySelector('.ticker').classList.add('glitch');
