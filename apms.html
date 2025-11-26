@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>APMS — Asia-Pacific Macro Stress | WAR.MARKET</title>
+    <title>WAR.MARKET — APMS</title>
     <link rel="stylesheet" href="styles/main.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,11 +29,6 @@
             text-transform: uppercase;
         }
 
-        .top-bar-left a {
-            color: var(--neon-green);
-            text-decoration: none;
-        }
-
         .top-bar-center {
             display: flex;
             gap: 32px;
@@ -53,69 +48,46 @@
             color: var(--neon-green);
         }
 
-        .page-container {
-            max-width: 1200px;
+        .index-container {
+            padding: 32px 24px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 48px 24px;
         }
 
-        .page-header {
-            margin-bottom: 32px;
+        .index-header {
+            margin-bottom: 48px;
             padding-bottom: 24px;
             border-bottom: 1px solid rgba(2, 255, 129, 0.2);
-            position: relative;
         }
 
-        .page-header h1 {
-            font-size: 36px;
+        .index-header h1 {
+            font-size: 48px;
             color: var(--neon-green);
             margin-bottom: 8px;
         }
 
-        .page-header .subtitle {
-            font-size: 16px;
+        .index-header .subtitle {
+            font-size: 18px;
             color: var(--text-secondary);
             font-family: 'IBM Plex Mono', monospace;
-            line-height: 1.6;
+            margin-bottom: 16px;
         }
 
-        .live-pill {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: var(--dark-panel);
-            border: 1px solid var(--neon-green);
-            padding: 8px 16px;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 11px;
-            color: var(--neon-green);
-            text-transform: uppercase;
+        .neon-line {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--neon-green), transparent);
+            margin-top: 16px;
         }
 
-        .live-pill .dot {
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            background: var(--neon-green);
-            border-radius: 50%;
-            margin-right: 6px;
-            animation: pulse-dot 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        .metrics-trading-grid {
+        .top-section {
             display: grid;
-            grid-template-columns: 1fr 400px;
+            grid-template-columns: 1fr 1fr;
             gap: 32px;
             margin-bottom: 48px;
         }
 
         @media (max-width: 968px) {
-            .metrics-trading-grid {
+            .top-section {
                 grid-template-columns: 1fr;
             }
         }
@@ -126,70 +98,56 @@
             padding: 24px;
         }
 
-        .metrics-row {
-            display: flex;
-            gap: 32px;
+        .live-metrics h3 {
+            font-size: 14px;
+            color: var(--neon-green);
             margin-bottom: 16px;
             font-family: 'IBM Plex Mono', monospace;
-            font-size: 14px;
-            flex-wrap: wrap;
+            text-transform: uppercase;
         }
 
-        .metric-item {
+        .metric-row {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(2, 255, 129, 0.1);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+        }
+
+        .metric-row:last-child {
+            border-bottom: none;
         }
 
         .metric-label {
-            font-size: 11px;
             color: var(--text-secondary);
-            text-transform: uppercase;
-            margin-bottom: 4px;
         }
 
         .metric-value {
-            font-size: 18px;
-            font-weight: 700;
             color: var(--neon-green);
+            font-weight: 600;
         }
 
-        .metric-value.negative {
+        .stress-level {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(2, 255, 129, 0.2);
+        }
+
+        .stress-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(255, 90, 90, 0.1);
+            border: 1px solid var(--alert-red);
             color: var(--alert-red);
-        }
-
-        .sparkline-container {
-            margin: 24px 0;
-            height: 60px;
-        }
-
-        .sparkline-large {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, var(--neon-green) 0%, var(--amber) 50%, var(--neon-green) 100%);
-            opacity: 0.6;
-            position: relative;
-        }
-
-        .stress-bar-large {
-            width: 100%;
-            height: 10px;
-            background: linear-gradient(90deg, var(--neon-green) 0%, var(--amber) 50%, var(--alert-red) 100%);
-            position: relative;
-            margin: 16px 0;
-        }
-
-        .stress-indicator-large {
-            position: absolute;
-            width: 80%;
-            height: 100%;
-            background: var(--alert-red);
-            opacity: 0.9;
-        }
-
-        .stress-label-large {
             font-family: 'IBM Plex Mono', monospace;
-            font-size: 12px;
-            color: var(--alert-red);
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .live-indicator {
+            color: var(--neon-green);
+            font-size: 11px;
             margin-top: 8px;
         }
 
@@ -207,175 +165,158 @@
             text-transform: uppercase;
         }
 
-        .section {
-            margin-bottom: 32px;
-            padding-bottom: 32px;
-            border-bottom: 1px solid rgba(2, 255, 129, 0.1);
+        .leverage-slider {
+            width: 100%;
+            margin: 16px 0;
         }
 
-        .section:last-child {
-            border-bottom: none;
+        .components-block {
+            background: var(--dark-panel);
+            border: 1px solid rgba(2, 255, 129, 0.2);
+            padding: 24px;
+            margin-bottom: 48px;
         }
 
-        .section h2 {
-            font-size: 18px;
+        .components-block h3 {
+            font-size: 16px;
             color: var(--neon-green);
             margin-bottom: 16px;
             font-family: 'IBM Plex Mono', monospace;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
         }
 
-        .section p {
-            color: #C8C8C8;
-            line-height: 1.6;
-            margin-bottom: 12px;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 13px;
-        }
-
-        .section ul {
-            color: #C8C8C8;
-            line-height: 1.8;
-            margin-left: 20px;
-            margin-bottom: 12px;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 13px;
-        }
-
-        .section li {
-            margin-bottom: 6px;
-        }
-
-        .composition-grid {
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
             margin-top: 16px;
         }
 
-        .composition-item {
+        .bar-item {
             display: flex;
             align-items: center;
             gap: 16px;
-            margin-bottom: 12px;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 13px;
         }
 
-        .composition-label {
+        .bar-label {
             min-width: 150px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
             color: var(--text-secondary);
         }
 
-        .composition-bar {
+        .bar-container {
             flex: 1;
-            height: 20px;
+            height: 24px;
             background: rgba(2, 255, 129, 0.1);
             position: relative;
             overflow: hidden;
         }
 
-        .composition-bar-fill {
+        .bar-fill {
             height: 100%;
-            background: var(--neon-green);
-            opacity: 0.8;
+            background: linear-gradient(90deg, var(--neon-green), var(--amber));
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--dark-bg);
+            font-weight: 600;
         }
 
-        .composition-percent {
-            min-width: 50px;
-            text-align: right;
+        .content-section {
+            margin-bottom: 32px;
+        }
+
+        .content-section h3 {
+            font-size: 16px;
             color: var(--neon-green);
-            font-weight: 600;
+            margin-bottom: 12px;
+            font-family: 'IBM Plex Mono', monospace;
+            text-transform: uppercase;
+        }
+
+        .content-section p {
+            color: var(--text-secondary);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            line-height: 1.8;
         }
 
         .back-link {
             display: inline-block;
+            margin-top: 48px;
             color: var(--neon-green);
             text-decoration: none;
             font-family: 'IBM Plex Mono', monospace;
-            font-size: 14px;
-            margin-top: 32px;
-            transition: opacity 0.3s ease;
+            font-size: 13px;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
         }
 
         .back-link:hover {
-            opacity: 0.7;
-        }
-
-        @media (max-width: 480px) {
-            .page-container {
-                padding: 24px 16px;
-            }
-
-            .page-header h1 {
-                font-size: 26px;
-            }
-
-            .live-pill {
-                font-size: 10px;
-                padding: 6px 12px;
-            }
-
-            .section h2 {
-                font-size: 16px;
-            }
+            color: var(--amber);
         }
     </style>
 </head>
 <body>
     <div class="map-background"></div>
     <div class="scan-line"></div>
+    <div class="scanning-label" style="top: 80px; right: 50px;">MONITORING ASIA-PACIFIC STRESS</div>
 
     <!-- Top Bar -->
     <div class="top-bar">
-        <div class="top-bar-left"><a href="index.html">WAR.MARKET</a></div>
+        <div class="top-bar-left">WAR.MARKET</div>
         <div class="top-bar-center">
-            <a href="terminal.html" class="nav-link active">Markets</a>
+            <a href="terminal.html" class="nav-link">Markets</a>
             <a href="vault.html" class="nav-link">riskHYPE</a>
-            <a href="risk-points.html" class="nav-link">RISK & POINTS</a>
+            <a href="about.html" class="nav-link">About</a>
+            <a href="#" class="nav-link">Points</a>
+            <a href="#" class="nav-link">$RISK</a>
         </div>
         <div>
             <button class="btn">CONNECT WALLET</button>
         </div>
     </div>
 
-    <div class="page-container">
-        <!-- Page Header -->
-        <div class="page-header">
+    <!-- Index Container -->
+    <div class="index-container">
+        <!-- Top Block -->
+        <div class="index-header">
             <h1>APMS — Asia-Pacific Macro Stress</h1>
-            <p class="subtitle">A synthetic index tracking stress across Asia-Pacific markets.</p>
-            <div class="live-pill">
-                <span class="dot"></span>LIVE • Updated 2.5s ago
-            </div>
+            <div class="subtitle">A synthetic index tracking stress across Asia-Pacific markets.</div>
+            <div class="neon-line"></div>
         </div>
 
-        <!-- Live Metrics + Trading Panel Grid -->
-        <div class="metrics-trading-grid">
+        <!-- Top Section: Live Metrics & Trading Panel -->
+        <div class="top-section">
             <!-- Live Metrics Block -->
             <div class="live-metrics">
-                <div class="metrics-row">
-                    <div class="metric-item">
-                        <div class="metric-label">PRICE</div>
-                        <div class="metric-value">$54.89</div>
-                    </div>
-                    <div class="metric-item">
-                        <div class="metric-label">24H</div>
-                        <div class="metric-value">+0.82%</div>
-                    </div>
-                    <div class="metric-item">
-                        <div class="metric-label">VOLUME</div>
-                        <div class="metric-value">$892K</div>
-                    </div>
+                <h3>LIVE METRICS</h3>
+                <div class="metric-row">
+                    <span class="metric-label">PRICE:</span>
+                    <span class="metric-value">$54.89</span>
                 </div>
-                
-                <div class="sparkline-container">
-                    <div class="sparkline-large"></div>
+                <div class="metric-row">
+                    <span class="metric-label">24H:</span>
+                    <span class="metric-value status-up">+0.82%</span>
                 </div>
-
-                <div>
-                    <div class="metric-label" style="margin-bottom: 8px;">STRESS LEVEL</div>
-                    <div class="stress-bar-large">
-                        <div class="stress-indicator-large"></div>
+                <div class="metric-row">
+                    <span class="metric-label">VOLUME:</span>
+                    <span class="metric-value">$892K</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">SPARKLINE:</span>
+                    <div class="sparkline" style="width: 60px; height: 16px; display: inline-block;"></div>
+                </div>
+                <div class="stress-level">
+                    <div class="metric-row">
+                        <span class="metric-label">STRESS LEVEL:</span>
+                        <span class="stress-badge">HIGH</span>
                     </div>
-                    <div class="stress-label-large">HIGH</div>
+                    <div class="live-indicator">LIVE • updated 2.5s ago</div>
                 </div>
             </div>
 
@@ -383,117 +324,88 @@
             <div class="trading-panel">
                 <h3>ORDER</h3>
                 <div style="margin-bottom: 16px;">
-                    <label class="text-small" style="display: block; margin-bottom: 8px;">Amount</label>
+                    <label class="text-small" style="display: block; margin-bottom: 8px;">Amount:</label>
                     <input type="text" class="input" placeholder="0.00" style="margin-bottom: 16px;">
-                    <label class="text-small" style="display: block; margin-bottom: 8px;">Leverage</label>
-                    <input type="range" min="1" max="10" value="1" class="input" style="width: 100%; margin-bottom: 8px;">
-                    <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-secondary); margin-bottom: 16px;">
-                        <span>1×</span>
-                        <span>10×</span>
-                    </div>
-                    <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">
-                        Funding: <span style="color: var(--neon-green);">+0.06%</span>
-                    </div>
                 </div>
-                <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                <div style="margin-bottom: 16px;">
+                    <label class="text-small" style="display: block; margin-bottom: 8px;">Leverage: <span id="leverageValue">1×</span></label>
+                    <input type="range" min="1" max="10" value="1" class="leverage-slider" id="leverageSlider" oninput="document.getElementById('leverageValue').textContent = this.value + '×'">
+                </div>
+                <div style="margin-bottom: 16px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text-secondary);">
+                    <div>Funding: <span class="status-up">+0.03%</span></div>
+                </div>
+                <div style="display: flex; gap: 8px;">
                     <button class="btn btn-long" style="flex: 1;">LONG APMS</button>
                     <button class="btn btn-short" style="flex: 1;">SHORT APMS</button>
-                </div>
-                <div style="font-size: 11px; color: var(--neon-green); text-align: center; font-family: 'IBM Plex Mono', monospace;">
-                    Trade on Hyperliquid
                 </div>
             </div>
         </div>
 
-        <!-- Index Composition -->
-        <div class="section">
-            <h2>INDEX COMPOSITION</h2>
-            <div class="composition-grid">
-                <div class="composition-item">
-                    <div class="composition-label">USD/CNH</div>
-                    <div class="composition-bar">
-                        <div class="composition-bar-fill" style="width: 40%;"></div>
+        <!-- Components Block -->
+        <div class="components-block">
+            <h3>INDEX COMPOSITION</h3>
+            <div class="bar-chart">
+                <div class="bar-item">
+                    <div class="bar-label">USD/CNH</div>
+                    <div class="bar-container">
+                        <div class="bar-fill" style="width: 40%;">40%</div>
                     </div>
-                    <div class="composition-percent">40%</div>
                 </div>
-                <div class="composition-item">
-                    <div class="composition-label">JPY</div>
-                    <div class="composition-bar">
-                        <div class="composition-bar-fill" style="width: 20%;"></div>
+                <div class="bar-item">
+                    <div class="bar-label">JPY</div>
+                    <div class="bar-container">
+                        <div class="bar-fill" style="width: 20%;">20%</div>
                     </div>
-                    <div class="composition-percent">20%</div>
                 </div>
-                <div class="composition-item">
-                    <div class="composition-label">Semiconductor Proxy</div>
-                    <div class="composition-bar">
-                        <div class="composition-bar-fill" style="width: 20%;"></div>
+                <div class="bar-item">
+                    <div class="bar-label">Semiconductor Proxy</div>
+                    <div class="bar-container">
+                        <div class="bar-fill" style="width: 20%;">20%</div>
                     </div>
-                    <div class="composition-percent">20%</div>
                 </div>
-                <div class="composition-item">
-                    <div class="composition-label">Shipping Proxy</div>
-                    <div class="composition-bar">
-                        <div class="composition-bar-fill" style="width: 10%;"></div>
+                <div class="bar-item">
+                    <div class="bar-label">Shipping Proxy</div>
+                    <div class="bar-container">
+                        <div class="bar-fill" style="width: 10%;">10%</div>
                     </div>
-                    <div class="composition-percent">10%</div>
                 </div>
-                <div class="composition-item">
-                    <div class="composition-label">FX Vol Index</div>
-                    <div class="composition-bar">
-                        <div class="composition-bar-fill" style="width: 10%;"></div>
+                <div class="bar-item">
+                    <div class="bar-label">FX Vol Index</div>
+                    <div class="bar-container">
+                        <div class="bar-fill" style="width: 10%;">10%</div>
                     </div>
-                    <div class="composition-percent">10%</div>
                 </div>
             </div>
         </div>
 
         <!-- Overview -->
-        <div class="section">
-            <h2>OVERVIEW</h2>
-            <p>APMS tracks structural stress in Asia-Pacific markets.</p>
-            <p>It reflects FX moves, semiconductor exposure, shipping, and volatility shifts.</p>
-            <p>It is a macro-volatility composite.</p>
+        <div class="content-section">
+            <h3>OVERVIEW</h3>
+            <p>APMS tracks structural stress in Asia-Pacific markets. It reflects FX moves, semiconductor exposure, shipping, and volatility shifts.</p>
         </div>
 
         <!-- Why This Index Matters -->
-        <div class="section">
-            <h2>WHY THIS INDEX MATTERS</h2>
-            <p>Asia-Pacific markets move together when supply chains or FX regimes shift.</p>
-            <p>APMS turns these tensions into a single synthetic index.</p>
+        <div class="content-section">
+            <h3>WHY THIS INDEX MATTERS</h3>
+            <p>Asia-Pacific markets move together when supply chains or FX regimes shift. APMS turns these tensions into a single synthetic index.</p>
         </div>
 
         <!-- How It Works -->
-        <div class="section">
-            <h2>HOW IT WORKS</h2>
-            <ul>
-                <li>HIP-3 perpetual on Hyperliquid</li>
-                <li>Neutral market data only</li>
-                <li>WAR.MARKET styles the presentation</li>
-            </ul>
-            <p style="margin-top: 16px; color: var(--neon-green); font-size: 12px;">Uses Hyperliquid HIP-3. This market can also be traded directly on <strong>Hyperliquid's front end</strong>.</p>
+        <div class="content-section">
+            <h3>HOW IT WORKS</h3>
+            <p>Deployed as a HIP-3 perpetual on Hyperliquid</p>
+            <p>Built from neutral market feeds</p>
+            <p>WAR.MARKET provides the thematic interface</p>
         </div>
 
         <!-- Powered By -->
-        <div class="section">
-            <h2>POWERED BY RISKHYPE</h2>
-            <p>Backed by staked HYPE from the riskHYPE vault.</p>
+        <div class="content-section">
+            <h3>POWERED BY RISKHYPE</h3>
+            <p>This index is backed by staked HYPE via the riskHYPE vault.</p>
         </div>
 
         <!-- Back Link -->
         <a href="terminal.html" class="back-link">← Return to Markets</a>
     </div>
-
-    <!-- Footer -->
-    <footer class="footer" style="padding: 24px; border-top: 1px solid rgba(2, 255, 129, 0.1); background: var(--dark-panel); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
-        <div class="footer-left" style="display: flex; gap: 24px; align-items: center; flex-wrap: wrap;">
-            <a href="#" class="footer-link" style="color: var(--text-secondary); text-decoration: none; font-family: 'IBM Plex Mono', monospace; font-size: 12px; transition: color 0.3s ease;">About</a>
-            <a href="#" class="footer-link" style="color: var(--text-secondary); text-decoration: none; font-family: 'IBM Plex Mono', monospace; font-size: 12px; transition: color 0.3s ease;">Docs</a>
-            <a href="#" class="footer-link" style="color: var(--text-secondary); text-decoration: none; font-family: 'IBM Plex Mono', monospace; font-size: 12px; transition: color 0.3s ease;">X</a>
-            <a href="#" class="footer-link" style="color: var(--text-secondary); text-decoration: none; font-family: 'IBM Plex Mono', monospace; font-size: 12px; transition: color 0.3s ease;">Discord</a>
-        </div>
-        <div class="footer-right" style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-secondary);">
-            <span>WAR.MARKET © 2025</span>
-        </div>
-    </footer>
 </body>
 </html>

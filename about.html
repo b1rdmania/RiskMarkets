@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WAR.MARKET — About</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .top-bar {
+            background: var(--dark-panel);
+            border-bottom: 1px solid rgba(2, 255, 129, 0.2);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .top-bar-left {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--neon-green);
+            text-transform: uppercase;
+        }
+
+        .top-bar-center {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--neon-green);
+        }
+
+        .about-container {
+            padding: 48px 24px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .page-title-block {
+            margin-bottom: 64px;
+            text-align: center;
+        }
+
+        .page-title-block h1 {
+            font-size: 48px;
+            color: var(--neon-green);
+            margin-bottom: 16px;
+        }
+
+        .page-title-block .subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+            font-family: 'IBM Plex Mono', monospace;
+            margin-bottom: 24px;
+        }
+
+        .neon-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--neon-green), transparent);
+            margin: 32px 0;
+        }
+
+        .content-section {
+            margin-bottom: 48px;
+        }
+
+        .content-section h2 {
+            font-size: 24px;
+            color: var(--neon-green);
+            margin-bottom: 16px;
+            font-family: 'IBM Plex Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .content-section p {
+            color: var(--text-secondary);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        .content-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .content-section li {
+            color: var(--text-secondary);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            line-height: 2;
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .content-section li::before {
+            content: '*';
+            position: absolute;
+            left: 0;
+            color: var(--neon-green);
+        }
+
+        .content-section li strong {
+            color: var(--neon-green);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 64px;
+            color: var(--neon-green);
+            text-decoration: none;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+            padding: 12px 24px;
+            border: 1px solid var(--neon-green);
+        }
+
+        .back-link:hover {
+            color: var(--dark-bg);
+            background: var(--neon-green);
+        }
+    </style>
+</head>
+<body>
+    <div class="map-background"></div>
+    <div class="scan-line"></div>
+    <div class="scanning-label" style="top: 80px; right: 50px;">SYSTEM STATUS: OPERATIONAL</div>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="top-bar-left">WAR.MARKET</div>
+        <div class="top-bar-center">
+            <a href="terminal.html" class="nav-link">Markets</a>
+            <a href="vault.html" class="nav-link">riskHYPE</a>
+            <a href="about.html" class="nav-link active">About</a>
+            <a href="#" class="nav-link">Points</a>
+            <a href="#" class="nav-link">$RISK</a>
+        </div>
+        <div>
+            <button class="btn">CONNECT WALLET</button>
+        </div>
+    </div>
+
+    <!-- About Container -->
+    <div class="about-container">
+        <!-- PAGE TITLE BLOCK -->
+        <div class="page-title-block">
+            <h1>ABOUT WAR.MARKET</h1>
+            <div class="subtitle">Synthetic stress indices built on Hyperliquid.</div>
+            <div class="neon-divider"></div>
+        </div>
+
+        <!-- SECTION 1 — THE IDEA -->
+        <div class="content-section">
+            <h2>A terminal for trading global risk.</h2>
+            <p>WAR.MARKET packages global stress into three synthetic macro-volatility indices.</p>
+            <p>The indices use neutral data feeds.</p>
+            <p>The execution happens on Hyperliquid.</p>
+            <p>The interface gives traders a clear, readable signal.</p>
+        </div>
+        <div class="neon-divider"></div>
+
+        <!-- SECTION 2 — HOW IT WORKS -->
+        <div class="content-section">
+            <h2>How it works.</h2>
+            <ul>
+                <li>Each index has a transparent formula.</li>
+                <li>Feeds update every 2.5 seconds.</li>
+                <li>No sentiment. No politics.</li>
+                <li>HIP-3 markets deployed on Hyperliquid.</li>
+                <li>Traders long or short via HL's front end or API.</li>
+                <li>WAR.MARKET supplies the thematic interface.</li>
+            </ul>
+        </div>
+        <div class="neon-divider"></div>
+
+        <!-- SECTION 3 — THE PROBLEM -->
+        <div class="content-section">
+            <h2>The problem.</h2>
+            <p>Trading global risk is fragmented.</p>
+            <p>Oil charts, FX charts, volatility indices, and commodities live in separate silos.</p>
+            <p>Nothing lines up.</p>
+            <p>You react to noise instead of pricing the signal.</p>
+        </div>
+        <div class="neon-divider"></div>
+
+        <!-- SECTION 4 — THE RESPONSE -->
+        <div class="content-section">
+            <h2>The response.</h2>
+            <p>WAR.MARKET creates one view.</p>
+            <p>You see the stress signal.</p>
+            <p>You trade the stress signal.</p>
+            <p>No noise. No interpretation layer.</p>
+            <p>Just volatility packaged into clear index structures.</p>
+        </div>
+        <div class="neon-divider"></div>
+
+        <!-- SECTION 5 — THE INDICES -->
+        <div class="content-section">
+            <h2>The indices.</h2>
+            <ul>
+                <li><strong>ECV</strong> — Energy Corridor Volatility</li>
+                <li><strong>APMS</strong> — Asia-Pacific Macro Stress</li>
+                <li><strong>GRMI</strong> — Global Risk Momentum Index</li>
+            </ul>
+            <p style="margin-top: 16px;">Each index is built from neutral price feeds using a fixed formula.</p>
+            <p>Each reflects a different part of the global stress surface.</p>
+        </div>
+        <div class="neon-divider"></div>
+
+        <!-- SECTION 6 — THE ENGINE -->
+        <div class="content-section">
+            <h2>The engine.</h2>
+            <p>The system runs on two parts:</p>
+            <ul>
+                <li><strong>riskHYPE</strong> — staked HYPE that powers HIP-3 markets.</li>
+                <li><strong>Points → $RISK</strong> — the reward loop for traders and stakers.</li>
+            </ul>
+        </div>
+        <div class="neon-divider"></div>
+
+        <!-- SECTION 7 — WHO IT'S FOR -->
+        <div class="content-section">
+            <h2>Who it's for.</h2>
+            <ul>
+                <li>Traders who want a clean signal.</li>
+                <li>Whales who want new volatility surfaces.</li>
+                <li>Analysts who want structure, not noise.</li>
+                <li>Builders who want composable stress indices.</li>
+            </ul>
+        </div>
+        <div class="neon-divider"></div>
+
+        <!-- SECTION 8 — FOUNDATION -->
+        <div class="content-section">
+            <h2>Foundation.</h2>
+            <ul>
+                <li>Powered by Hyperliquid HIP-3</li>
+                <li>Neutral Pyth feeds</li>
+                <li>Transparent index formulas</li>
+                <li>Testnet first</li>
+                <li>Public vault model</li>
+            </ul>
+        </div>
+        <div class="neon-divider"></div>
+
+        <!-- FOOTER LINK -->
+        <div style="text-align: center;">
+            <a href="terminal.html" class="back-link">← Return to Terminal</a>
+        </div>
+    </div>
+</body>
+</html>
+

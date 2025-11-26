@@ -102,3 +102,5 @@ If you need env vars later (API keys, etc.):
 - All HTML files should be in root directory (✓ already done)
 - vercel.json handles routing automatically
 
+
+

@@ -68,27 +68,6 @@
             background: var(--dark-panel);
             border: 1px solid rgba(2, 255, 129, 0.2);
             overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-            @media (max-width: 480px) {
-            .markets-container {
-                padding: 24px 16px;
-            }
-
-            .markets-header h1 {
-                font-size: 26px;
-            }
-
-            .markets-table-wrapper {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            .table {
-                min-width: 600px;
-                font-size: 12px;
-            }
         }
 
         .index-icon {
@@ -131,8 +110,6 @@
             background: transparent;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
         }
 
         .btn-long {
@@ -222,6 +199,24 @@
             51%, 100% { opacity: 0; }
         }
 
+        /* Intel file tooltip style */
+        .index-tooltip {
+            position: absolute;
+            background: var(--dark-panel);
+            border: 1px solid rgba(2, 255, 129, 0.3);
+            padding: 12px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            max-width: 300px;
+            display: none;
+            z-index: 1000;
+        }
+
+        .table tr:hover .index-tooltip {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -232,11 +227,13 @@
 
     <!-- Top Bar -->
     <div class="top-bar">
-        <div class="top-bar-left"><a href="index.html" style="color: var(--neon-green); text-decoration: none;">WAR.MARKET</a></div>
+        <div class="top-bar-left">WAR.MARKET</div>
         <div class="top-bar-center">
             <a href="terminal.html" class="nav-link active">Markets</a>
             <a href="vault.html" class="nav-link">riskHYPE</a>
-            <a href="risk-points.html" class="nav-link">RISK & POINTS</a>
+            <a href="about.html" class="nav-link">About</a>
+            <a href="#" class="nav-link">Points</a>
+            <a href="#" class="nav-link">$RISK</a>
         </div>
         <div>
             <button class="btn">CONNECT WALLET</button>
@@ -266,7 +263,6 @@
         <div class="markets-header">
             <h1>MARKETS</h1>
             <p class="text-small">Trade synthetic volatility indices built from neutral macro feeds.</p>
-            <p class="text-small" style="margin-top: 8px; color: var(--neon-green);">Uses Hyperliquid HIP-3. All markets can also be traded on <strong>Hyperliquid's front end</strong>.</p>
         </div>
 
         <div class="markets-table-wrapper">
@@ -282,7 +278,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr style="cursor: pointer;" onclick="window.location.href='ecv.html'">
+                    <tr onclick="window.location.href='ecv.html'">
                         <td>
                             <div class="index-name">ECV</div>
                             <div class="index-subtitle">ENERGY CORRIDOR VOLATILITY</div>
@@ -293,15 +289,12 @@
                         <td class="text-mono">$1.32M</td>
                         <td>
                             <div class="action-buttons">
-                                <a href="ecv.html" class="btn-action btn-long" onclick="event.stopPropagation()">LONG</a>
-                                <a href="ecv.html" class="btn-action btn-short" onclick="event.stopPropagation()">SHORT</a>
-                            </div>
-                            <div style="font-size: 10px; color: var(--text-secondary); margin-top: 4px; font-family: 'IBM Plex Mono', monospace;">
-                                Trade on Hyperliquid
+                                <button class="btn-action btn-long" onclick="event.stopPropagation()">LONG</button>
+                                <button class="btn-action btn-short" onclick="event.stopPropagation()">SHORT</button>
                             </div>
                         </td>
                     </tr>
-                    <tr style="cursor: pointer;" onclick="window.location.href='apms.html'">
+                    <tr onclick="window.location.href='apms.html'">
                         <td>
                             <div class="index-name">APMS</div>
                             <div class="index-subtitle">ASIA-PACIFIC MACRO STRESS</div>
@@ -312,15 +305,12 @@
                         <td class="text-mono">$892K</td>
                         <td>
                             <div class="action-buttons">
-                                <a href="apms.html" class="btn-action btn-long" onclick="event.stopPropagation()">LONG</a>
-                                <a href="apms.html" class="btn-action btn-short" onclick="event.stopPropagation()">SHORT</a>
-                            </div>
-                            <div style="font-size: 10px; color: var(--text-secondary); margin-top: 4px; font-family: 'IBM Plex Mono', monospace;">
-                                Trade on Hyperliquid
+                                <button class="btn-action btn-long" onclick="event.stopPropagation()">LONG</button>
+                                <button class="btn-action btn-short" onclick="event.stopPropagation()">SHORT</button>
                             </div>
                         </td>
                     </tr>
-                    <tr style="cursor: pointer;" onclick="window.location.href='grmi.html'">
+                    <tr onclick="window.location.href='grmi.html'">
                         <td>
                             <div class="index-name">GRMI</div>
                             <div class="index-subtitle">GLOBAL RISK MOMENTUM INDEX</div>
@@ -331,11 +321,8 @@
                         <td class="text-mono">$2.14M</td>
                         <td>
                             <div class="action-buttons">
-                                <a href="grmi.html" class="btn-action btn-long" onclick="event.stopPropagation()">LONG</a>
-                                <a href="grmi.html" class="btn-action btn-short" onclick="event.stopPropagation()">SHORT</a>
-                            </div>
-                            <div style="font-size: 10px; color: var(--text-secondary); margin-top: 4px; font-family: 'IBM Plex Mono', monospace;">
-                                Trade on Hyperliquid
+                                <button class="btn-action btn-long" onclick="event.stopPropagation()">LONG</button>
+                                <button class="btn-action btn-short" onclick="event.stopPropagation()">SHORT</button>
                             </div>
                         </td>
                     </tr>
@@ -360,20 +347,126 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer" style="padding: 24px; border-top: 1px solid rgba(2, 255, 129, 0.1); background: var(--dark-panel); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
-        <div class="footer-left" style="display: flex; gap: 24px; align-items: center; flex-wrap: wrap;">
-            <a href="#" class="footer-link" style="color: var(--text-secondary); text-decoration: none; font-family: 'IBM Plex Mono', monospace; font-size: 12px; transition: color 0.3s ease;">About</a>
-            <a href="#" class="footer-link" style="color: var(--text-secondary); text-decoration: none; font-family: 'IBM Plex Mono', monospace; font-size: 12px; transition: color 0.3s ease;">Docs</a>
-            <a href="#" class="footer-link" style="color: var(--text-secondary); text-decoration: none; font-family: 'IBM Plex Mono', monospace; font-size: 12px; transition: color 0.3s ease;">X</a>
-            <a href="#" class="footer-link" style="color: var(--text-secondary); text-decoration: none; font-family: 'IBM Plex Mono', monospace; font-size: 12px; transition: color 0.3s ease;">Discord</a>
+    <!-- Trading Drawer -->
+    <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+    <div class="drawer" id="tradingDrawer">
+        <div style="margin-bottom: 24px;">
+            <h2 style="color: var(--neon-green); margin-bottom: 8px;" id="drawerIndex">ECV</h2>
+            <p class="text-small" id="drawerSubtitle">Energy Corridor Volatility</p>
+            <p style="color: var(--amber); font-size: 12px; margin-top: 8px;" id="stressLevel">Stress Level: MEDIUM</p>
         </div>
-        <div class="footer-right" style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-secondary);">
-            <span>WAR.MARKET © 2025</span>
+
+        <!-- Chart Placeholder -->
+        <div style="background: var(--dark-surface); height: 300px; border: 1px solid rgba(2, 255, 129, 0.2); margin-bottom: 24px; position: relative; display: flex; align-items: center; justify-content: center;">
+            <div style="color: var(--text-secondary); font-family: 'IBM Plex Mono', monospace; font-size: 12px;">CHART: 1m | 1h | 1d</div>
         </div>
-    </footer>
+
+        <!-- Order Panel -->
+        <div class="panel" style="margin-bottom: 24px;">
+            <h3 style="font-size: 14px; margin-bottom: 16px; color: var(--text-primary);">ORDER</h3>
+            
+            <div style="margin-bottom: 16px;">
+                <label class="text-small" style="display: block; margin-bottom: 8px;">Amount</label>
+                <input type="text" class="input" placeholder="0.00 HYPE" style="margin-bottom: 8px;">
+                <input type="text" class="input" placeholder="or USDC">
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <label class="text-small" style="display: block; margin-bottom: 8px;">Leverage: <span id="leverageValue">1×</span></label>
+                <input type="range" min="1" max="10" value="1" class="input" style="width: 100%;" id="leverageSlider" oninput="document.getElementById('leverageValue').textContent = this.value + '×'">
+            </div>
+
+            <div style="margin-bottom: 16px; font-size: 12px; color: var(--text-secondary);">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                    <span>Fee:</span>
+                    <span>0.05%</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Funding Estimate:</span>
+                    <span>0.01% / 8h</span>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+                <button class="btn btn-long" style="flex: 1;">LONG ECV</button>
+                <button class="btn btn-short" style="flex: 1;">SHORT ECV</button>
+            </div>
+        </div>
+
+        <!-- Oracle Breakdown -->
+        <div class="panel" style="margin-bottom: 24px;">
+            <h3 style="font-size: 14px; margin-bottom: 16px; color: var(--text-primary);">INDEX COMPOSITION</h3>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; line-height: 1.8; color: var(--text-secondary);">
+                <div>35% Oil (Pyth)</div>
+                <div>20% NatGas (Pyth)</div>
+                <div>20% Freight Proxy</div>
+                <div>15% Gold (Pyth)</div>
+                <div>10% USD/CHF (Pyth)</div>
+            </div>
+            <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(2, 255, 129, 0.2); font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-secondary);">
+                <div>Update Cycle: 2.5s</div>
+                <div>Last Sync: 00:00:08</div>
+            </div>
+        </div>
+
+        <!-- Stress Bar -->
+        <div>
+            <div class="text-small" style="margin-bottom: 8px;">STRESS LEVEL</div>
+            <div class="stress-bar">
+                <div class="stress-dot"></div>
+            </div>
+        </div>
+    </div>
 
     <script>
+        const indexData = {
+            ECV: {
+                name: 'ECV',
+                subtitle: 'Energy Corridor Volatility',
+                stress: 'MEDIUM'
+            },
+            APMS: {
+                name: 'APMS',
+                subtitle: 'Asia-Pacific Macro Stress',
+                stress: 'HIGH'
+            },
+            GRMI: {
+                name: 'GRMI',
+                subtitle: 'Global Risk Momentum Index',
+                stress: 'LOW'
+            },
+            EASCS: {
+                name: 'EASCS',
+                subtitle: 'East Asia Supply Chain Stress',
+                stress: 'MEDIUM'
+            },
+            EUVI: {
+                name: 'EUVI',
+                subtitle: 'European Volatility Index',
+                stress: 'LOW'
+            }
+        };
+
+        function openDrawer(index) {
+            const drawer = document.getElementById('tradingDrawer');
+            const overlay = document.getElementById('drawerOverlay');
+            const data = indexData[index];
+            
+            document.getElementById('drawerIndex').textContent = data.name;
+            document.getElementById('drawerSubtitle').textContent = data.subtitle;
+            document.getElementById('stressLevel').textContent = `Stress Level: ${data.stress}`;
+            
+            drawer.classList.add('open');
+            overlay.classList.add('active');
+        }
+
+        function closeDrawer() {
+            const drawer = document.getElementById('tradingDrawer');
+            const overlay = document.getElementById('drawerOverlay');
+            drawer.classList.remove('open');
+            overlay.classList.remove('active');
+        }
+
         // Glitch effect every 12 seconds on ticker
         setInterval(() => {
             document.querySelector('.ticker').classList.add('glitch');

@@ -187,24 +187,6 @@
             margin-bottom: 16px;
             font-family: 'IBM Plex Mono', monospace;
         }
-
-        @media (max-width: 480px) {
-            .vault-container {
-                padding: 24px 16px;
-            }
-
-            .vault-header h1 {
-                font-size: 26px;
-            }
-
-            .deposit-withdraw-section {
-                grid-template-columns: 1fr;
-            }
-
-            .input {
-                font-size: 16px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -215,11 +197,13 @@
 
     <!-- Top Bar -->
     <div class="top-bar">
-        <div class="top-bar-left"><a href="index.html" style="color: var(--neon-green); text-decoration: none;">WAR.MARKET</a></div>
+        <div class="top-bar-left">WAR.MARKET</div>
         <div class="top-bar-center">
             <a href="terminal.html" class="nav-link">Markets</a>
             <a href="vault.html" class="nav-link active">riskHYPE</a>
-            <a href="risk-points.html" class="nav-link">RISK & POINTS</a>
+            <a href="about.html" class="nav-link">About</a>
+            <a href="#" class="nav-link">Points</a>
+            <a href="#" class="nav-link">$RISK</a>
         </div>
         <div>
             <button class="btn">CONNECT WALLET</button>
@@ -230,7 +214,7 @@
     <div class="vault-container">
         <div class="vault-header">
             <h1>RISKHYPE</h1>
-            <p>Stake HYPE. Earn Points. Power the System.</p>
+            <p>Stake HYPE. Earn points. Power the system.</p>
         </div>
 
         <!-- Vault Metrics Grid -->
@@ -268,7 +252,7 @@
             </div>
 
             <div class="metric-box">
-                <div class="metric-label">APY (BASE)</div>
+                <div class="metric-label">APY</div>
                 <div class="metric-value">4.2%</div>
                 <div class="metric-bar">
                     <div class="metric-bar-fill" style="width: 42%;"></div>
@@ -283,7 +267,7 @@
         </div>
 
         <div class="vault-warning">
-            Withdrawals paused if vault &lt; 500,000 HYPE
+            withdrawals paused if vault &lt; 500,000 HYPE
         </div>
 
         <!-- Deposit / Withdraw Section -->
@@ -293,7 +277,7 @@
                 <h3>DEPOSIT</h3>
                 
                 <div style="margin-bottom: 16px;">
-                    <label class="text-small" style="display: block; margin-bottom: 8px;">Amount</label>
+                    <label class="text-small" style="display: block; margin-bottom: 8px;">Amount:</label>
                     <input type="text" class="input" placeholder="0.00 HYPE" style="margin-bottom: 16px;">
                     <button class="btn btn-primary" style="width: 100%;">STAKE → MINT RISKHYPE</button>
                 </div>
@@ -314,7 +298,7 @@
                 </div>
 
                 <div class="info-text">
-                    <em>Earn points every hour your stake remains active.</em>
+                    Earn points every hour your stake remains active.
                 </div>
             </div>
 
@@ -322,18 +306,14 @@
             <div class="withdraw-box">
                 <h3>WITHDRAW</h3>
                 
-                <button class="collapse-toggle" onclick="toggleWithdraw()">WITHDRAW</button>
-                
-                <div id="withdrawContent" class="withdraw-collapsed" style="margin-top: 16px;">
-                    <div style="margin-bottom: 16px;">
-                        <label class="text-small" style="display: block; margin-bottom: 8px;">Amount</label>
-                        <input type="text" class="input" placeholder="____" style="margin-bottom: 16px;">
-                        <button class="btn btn-short" style="width: 100%;">WITHDRAW</button>
-                    </div>
+                <div style="margin-bottom: 16px;">
+                    <label class="text-small" style="display: block; margin-bottom: 8px;">Amount:</label>
+                    <input type="text" class="input" placeholder="____" style="margin-bottom: 16px;">
+                    <button class="btn btn-short" style="width: 100%;">WITHDRAW</button>
+                </div>
                     
-                    <div class="info-text">
-                        <em>Queued withdrawals complete after unbonding and once vault > 500,000 HYPE.</em>
-                    </div>
+                <div class="info-text">
+                    Queued withdrawals complete after unbonding and once vault > 500,000 HYPE.
                 </div>
             </div>
         </div>
@@ -342,9 +322,9 @@
         <div class="activity-section">
             <h2>ACTIVITY LOG</h2>
             <div class="activity-feed">
-                <div class="activity-item">+ 1,200 HYPE staked</div>
-                <div class="activity-item">+ 850 HYPE staked</div>
-                <div class="activity-item">- 300 HYPE withdrawal queued</div>
+                <div class="activity-item">1,200 HYPE staked</div>
+                <div class="activity-item">850 HYPE staked</div>
+                <div class="activity-item">300 HYPE withdrawal queued</div>
                 <div class="activity-item">stressHYPE reward multiplier increased</div>
                 <div class="activity-item">vault buffer updated: 168,314 HYPE</div>
                 <div class="activity-item">points batch credited</div>
@@ -352,31 +332,6 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer" style="padding: 24px; border-top: 1px solid rgba(2, 255, 129, 0.1); background: var(--dark-panel); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
-        <div class="footer-left" style="display: flex; gap: 24px; align-items: center; flex-wrap: wrap;">
-            <a href="#" class="footer-link" style="color: var(--text-secondary); text-decoration: none; font-family: 'IBM Plex Mono', monospace; font-size: 12px; transition: color 0.3s ease;">About</a>
-            <a href="#" class="footer-link" style="color: var(--text-secondary); text-decoration: none; font-family: 'IBM Plex Mono', monospace; font-size: 12px; transition: color 0.3s ease;">Docs</a>
-            <a href="#" class="footer-link" style="color: var(--text-secondary); text-decoration: none; font-family: 'IBM Plex Mono', monospace; font-size: 12px; transition: color 0.3s ease;">X</a>
-            <a href="#" class="footer-link" style="color: var(--text-secondary); text-decoration: none; font-family: 'IBM Plex Mono', monospace; font-size: 12px; transition: color 0.3s ease;">Discord</a>
-        </div>
-        <div class="footer-right" style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-secondary);">
-            <span>WAR.MARKET © 2025</span>
-        </div>
-    </footer>
-
-    <script>
-        function toggleWithdraw() {
-            const content = document.getElementById('withdrawContent');
-            if (content.classList.contains('withdraw-collapsed')) {
-                content.classList.remove('withdraw-collapsed');
-                content.classList.add('withdraw-expanded');
-            } else {
-                content.classList.remove('withdraw-expanded');
-                content.classList.add('withdraw-collapsed');
-            }
-        }
-    </script>
 </body>
 </html>
 
