@@ -585,7 +585,13 @@ h1, h2, h3 {
   50% { opacity: 0.8; }
 }
 
-/* Responsive */
+/* Responsive - Simple Mobile Support */
+@media (max-width: 968px) {
+  .metrics-trading-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 0 16px;
@@ -598,6 +604,60 @@ h1, h2, h3 {
 
   .cli-prompts {
     display: none;
+  }
+}
+
+/* iPhone - Basic Readability */
+@media (max-width: 480px) {
+  /* Text sizing */
+  .logo {
+    font-size: 40px;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
+
+  /* Spacing */
+  .container {
+    padding: 0 16px;
+  }
+
+  /* Buttons - touch friendly */
+  .btn {
+    padding: 14px 24px;
+    font-size: 14px;
+  }
+
+  /* Tables - scrollable */
+  .table {
+    font-size: 12px;
+  }
+
+  .table th,
+  .table td {
+    padding: 10px 8px;
+  }
+
+  /* Top bar */
+  .top-bar {
+    padding: 12px 16px;
+    flex-wrap: wrap;
+  }
+
+  .top-bar-center {
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  /* Inputs - prevent zoom */
+  .input {
+    font-size: 16px;
+  }
+
+  /* Grids stack */
+  .metric-grid {
+    grid-template-columns: 1fr;
   }
 }
 

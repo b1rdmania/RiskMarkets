@@ -68,6 +68,27 @@
             background: var(--dark-panel);
             border: 1px solid rgba(2, 255, 129, 0.2);
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+            @media (max-width: 480px) {
+            .markets-container {
+                padding: 24px 16px;
+            }
+
+            .markets-header h1 {
+                font-size: 26px;
+            }
+
+            .markets-table-wrapper {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .table {
+                min-width: 600px;
+                font-size: 12px;
+            }
         }
 
         .index-icon {
