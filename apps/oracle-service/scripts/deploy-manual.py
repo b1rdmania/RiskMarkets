@@ -60,18 +60,23 @@ def deploy_manual():
         print(f"❌ Error initializing wallet: {e}")
         sys.exit(1)
     
-    # Manually construct the action WITHOUT maxGas
-    # Based on Hyperliquid docs and the captured payload
+    # Manually construct the action using registerAsset2 (current HIP-3 spec)
+    # Based on: https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/hip-3-deployer-actions
+    # 
+    # Key differences from old registerAsset:
+    # - Use registerAsset2 (not registerAsset)
+    # - Use marginMode: "strictIsolated" (not onlyIsolated: true)
+    # - Omit maxGas entirely (optional field)
     action = {
         "type": "perpDeploy",
-        "registerAsset": {
-            # Omit "maxGas" entirely - this is the workaround
+        "registerAsset2": {
+            # Omit "maxGas" entirely (optional field)
             "assetRequest": {
                 "coin": HL_COIN_SYMBOL,
                 "szDecimals": 2,
                 "oraclePx": INITIAL_ORACLE_PRICE,  # String
-                "marginTableId": 0,
-                "onlyIsolated": True,
+                "marginTableId": 1,  # Use 1 instead of 0 (more standard)
+                "marginMode": "strictIsolated",  # Use marginMode, not onlyIsolated
             },
             "dex": HL_DEX_NAME,
             "schema": {
@@ -123,7 +128,7 @@ def deploy_manual():
             "expiresAfter": None,  # SDK adds this as null
         }
         
-        print("📦 Full payload (without maxGas, vaultAddress, expiresAfter):")
+        print("📦 Full payload (using registerAsset2 with marginMode):")
         print(json.dumps(payload, indent=2))
         print()
         
