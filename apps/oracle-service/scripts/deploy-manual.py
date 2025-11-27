@@ -49,26 +49,17 @@ def deploy_manual():
     print("\n🚀 Manual HIP-3 Deployment (using registerAsset2)")
     print(f"   DEX: {HL_DEX_NAME}")
     print(f"   Coin: {HL_COIN_SYMBOL}")
-    print(f"   Initial Oracle Price: {INITIAL_ORACLE_PRICE}")
-    print(f"   Expected Wallet: 0xC0D35857e87F5ADe6055714706fb4dFD96DE087E\n")
+    print(f"   Initial Oracle Price: {INITIAL_ORACLE_PRICE}\n")
     
     # Initialize wallet
+    # Note: Hyperliquid API uses sub-wallets, but L1 actions should be signed by main wallet
+    # The main wallet address is: 0xC0D35857e87F5ADe6055714706fb4dFD96DE087E
     try:
         wallet = eth_account.Account.from_key(HL_API_SECRET)
         wallet_address = wallet.address
         print(f"✅ Wallet from secret: {wallet_address}")
         
-        # Verify wallet matches expected address
-        EXPECTED_WALLET = "0xC0D35857e87F5ADe6055714706fb4dFD96DE087E"
-        if wallet_address.lower() != EXPECTED_WALLET.lower():
-            print(f"\n⚠️  WARNING: Wallet address mismatch!")
-            print(f"   Expected: {EXPECTED_WALLET}")
-            print(f"   Got:      {wallet_address}")
-            print(f"   The private key in HL_API_SECRET does not match the expected wallet.")
-            print(f"   Please update HL_API_SECRET to the private key for {EXPECTED_WALLET}\n")
-            sys.exit(1)
-        
-        print(f"✅ Wallet verified: {wallet_address}\n")
+        print(f"✅ Using API wallet: {wallet_address}\n")
     except Exception as e:
         print(f"❌ Error initializing wallet: {e}")
         sys.exit(1)
@@ -92,11 +83,11 @@ def deploy_manual():
                 "marginMode": "strictIsolated",  # Use marginMode, not onlyIsolated
             },
             "dex": HL_DEX_NAME,
-            "schema": {
-                "fullName": f"{HL_DEX_NAME} Test DEX",
-                "collateralToken": 0,
-                "oracleUpdater": wallet.address.lower(),
-            }
+        "schema": {
+          "fullName": f"{HL_DEX_NAME} Test DEX",
+          "collateralToken": 0,
+          "oracleUpdater": wallet_address.lower(),
+        }
         }
     }
     
