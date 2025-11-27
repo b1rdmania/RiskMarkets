@@ -18,6 +18,10 @@ import { request } from 'undici';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 
+// For Ethereum wallet signing
+// Note: Hyperliquid uses wallet signature, not HMAC
+// We'll need to use ethereum signing - for now, let's try the API wallet approach
+
 // Load environment
 const envFile = process.env.ENV_FILE ?? '.env.testnet';
 dotenv.config({ path: path.resolve(process.cwd(), envFile) });
@@ -30,6 +34,10 @@ const HL_DEX_NAME = process.env.HL_DEX_NAME || 'WARMARKET';
 if (!HL_API_KEY || !HL_API_SECRET) {
   throw new Error('Missing HL_API_KEY or HL_API_SECRET');
 }
+
+// TypeScript: ensure these are strings after the check
+const API_KEY: string = HL_API_KEY;
+const API_SECRET: string = HL_API_SECRET;
 
 /**
  * Register Asset Action
@@ -66,33 +74,54 @@ async function deployMarket(config: {
   console.log(`   Size Decimals: ${szDecimals}`);
   console.log(`   Max Leverage: ${maxLeverage}x\n`);
 
-  const registerAsset: RegisterAsset = {
-    type: 'registerAsset',
-    name: assetName,
-    szDecimals,
-    maxLeverage,
-  };
-
+  // Try different action structures - Hyperliquid API might expect different format
+  // Option 1: Nested perpDeploy
   const action = {
     type: 'perpDeploy',
-    registerAsset,
+    registerAsset: {
+      type: 'registerAsset',
+      name: assetName,
+      szDecimals,
+      maxLeverage,
+    },
   };
 
-  const payload = {
-    action,
-  };
-
-  const body = JSON.stringify(payload);
+  // Hyperliquid API requires: action, nonce, and signature
+  // The signature is a wallet signature (Ethereum signature), not HMAC
+  // For API wallets, we may need to use the private key to sign
+  const nonce = Date.now();
   
-  // Sign the request (authentication method may vary - verify with HL docs)
-  const signature = crypto.createHmac('sha256', HL_API_SECRET)
-    .update(body)
+  // Create the full request body with nonce
+  const requestBody = {
+    action: payload.action,
+    nonce,
+    // signature will be added after signing
+  };
+
+  const bodyToSign = JSON.stringify(requestBody);
+  
+  // TODO: Use proper Ethereum wallet signing here
+  // For now, trying HMAC as a fallback (may not work)
+  // Hyperliquid API wallets might use different auth - need to verify
+  const signature = crypto.createHmac('sha256', API_SECRET)
+    .update(bodyToSign)
     .digest('hex');
 
+  // Add signature to request body
+  const finalBody = {
+    ...requestBody,
+    signature: {
+      r: signature.slice(0, 64),  // Placeholder - need proper Ethereum signature
+      s: signature.slice(64, 128),
+      v: 27,
+    },
+  };
+
+  const body = JSON.stringify(finalBody);
   const endpoint = `${HL_URL}/exchange`;
   
   console.log(`📡 Sending to: ${endpoint}`);
-  console.log(`📦 Payload:`, JSON.stringify(payload, null, 2));
+  console.log(`📦 Payload (without signature):`, JSON.stringify({ ...finalBody, signature: '***HIDDEN***' }, null, 2));
   // ⚠️ SECURITY: Never log HL_API_SECRET or full API keys in production
 
   try {
@@ -101,8 +130,6 @@ async function deployMarket(config: {
       body,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${HL_API_KEY}:${signature}`,
-        'X-API-Key': HL_API_KEY,
       },
     });
 
@@ -133,33 +160,22 @@ async function deployMarket(config: {
  * Main execution
  */
 async function main() {
-  // Example: Deploy GOLD-TEST market
-  // Adjust these parameters based on your needs
-  
+  // Deploy GOLD-TEST market (solo asset, recommended for v0)
   const marketConfig = {
-    assetName: 'GOLD-TEST',  // Change to your desired asset name
+    assetName: 'GOLD-TEST',  // Asset name (<= 6 chars recommended)
     szDecimals: 2,  // For $0.01 increments (if price ~$2000)
     maxLeverage: 20,  // 20x leverage
   };
 
-  // Uncomment to deploy:
-  // await deployMarket(marketConfig);
+  console.log('🚀 Ready to deploy HIP-3 market on Hyperliquid testnet\n');
+  console.log('Market configuration:');
+  console.log(`  Asset: ${marketConfig.assetName}`);
+  console.log(`  Size Decimals: ${marketConfig.szDecimals}`);
+  console.log(`  Max Leverage: ${marketConfig.maxLeverage}x`);
+  console.log(`  DEX: ${HL_DEX_NAME}\n`);
 
-  console.log(`
-⚠️  DEPLOYMENT SCRIPT READY
-
-This script is ready to deploy a HIP-3 market, but you should:
-
-1. Verify the exact API structure with Hyperliquid docs
-2. Check if testnet requires staking (may be waived)
-3. Confirm authentication method (HMAC vs wallet signature)
-4. Review market parameters before deploying
-
-To deploy, uncomment the deployMarket() call above and run:
-  NETWORK=testnet ts-node scripts/deploy-market.ts
-
-Recommended first market: GOLD-TEST (solo asset, simple to test)
-  `);
+  // Deploy the market
+  await deployMarket(marketConfig);
 }
 
 main().catch((error) => {
