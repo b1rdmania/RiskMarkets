@@ -98,8 +98,41 @@
         }
 
         @media (max-width: 768px) {
+            .vault-container {
+                padding: 24px 16px;
+            }
+
+            .vault-header h1 {
+                font-size: 28px;
+            }
+
+            .vault-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
             .deposit-withdraw-section {
                 grid-template-columns: 1fr;
+            }
+
+            .top-bar-center {
+                gap: 16px;
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 393px) {
+            .vault-header h1 {
+                font-size: 24px;
+            }
+
+            .metric-value {
+                font-size: 20px;
+            }
+
+            .top-bar-center {
+                gap: 12px;
+                font-size: 10px;
             }
         }
 

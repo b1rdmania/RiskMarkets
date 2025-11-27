@@ -68,6 +68,99 @@
             background: var(--dark-panel);
             border: 1px solid rgba(2, 255, 129, 0.2);
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        @media (max-width: 768px) {
+            .top-bar-center {
+                gap: 16px;
+                font-size: 11px;
+            }
+
+            .markets-container {
+                padding: 24px 16px;
+            }
+
+            .markets-header h1 {
+                font-size: 24px;
+            }
+
+            .table {
+                font-size: 11px;
+            }
+
+            .table th,
+            .table td {
+                padding: 12px 8px;
+            }
+
+            .index-name {
+                font-size: 14px;
+            }
+
+            .index-subtitle {
+                font-size: 9px;
+            }
+
+            .price {
+                font-size: 14px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .btn-action {
+                padding: 6px 12px;
+                font-size: 11px;
+                width: 100%;
+            }
+
+            .ticker {
+                font-size: 11px;
+            }
+
+            .bottom-bar {
+                padding: 10px 16px;
+                font-size: 11px;
+            }
+
+            .risk-bar {
+                width: 120px;
+            }
+        }
+
+        @media (max-width: 393px) {
+            .top-bar-center {
+                gap: 12px;
+                font-size: 10px;
+            }
+
+            .markets-header h1 {
+                font-size: 20px;
+            }
+
+            .table {
+                font-size: 10px;
+            }
+
+            .table th,
+            .table td {
+                padding: 10px 6px;
+            }
+
+            .index-name {
+                font-size: 13px;
+            }
+
+            .index-subtitle {
+                font-size: 8px;
+            }
+
+            .price {
+                font-size: 13px;
+            }
         }
 
         .index-icon {

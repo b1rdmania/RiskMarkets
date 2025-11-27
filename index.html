@@ -256,6 +256,72 @@
             font-size: 11px;
             color: var(--text-secondary);
         }
+
+        @media (max-width: 768px) {
+            .video-hero {
+                height: 100vh;
+                height: 100dvh;
+            }
+
+            .hero {
+                padding: 32px 16px;
+                min-height: auto;
+            }
+
+            .hero .logo {
+                font-size: 48px;
+            }
+
+            .tagline {
+                font-size: 16px;
+                margin-bottom: 32px;
+            }
+
+            .cta-button {
+                padding: 14px 32px;
+                font-size: 14px;
+            }
+
+            .explainer-strip {
+                padding: 32px 16px;
+            }
+
+            .explainer-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .scroll-indicator {
+                bottom: 20px;
+            }
+
+            .scroll-indicator-text {
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 393px) {
+            .hero .logo {
+                font-size: 40px;
+            }
+
+            .tagline {
+                font-size: 14px;
+            }
+
+            .cta-button {
+                padding: 12px 24px;
+                font-size: 12px;
+            }
+
+            .explainer-item h3 {
+                font-size: 16px;
+            }
+
+            .explainer-item p {
+                font-size: 12px;
+            }
+        }
     </style>
 </head>
 <body>

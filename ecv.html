@@ -259,6 +259,73 @@
         .back-link:hover {
             color: var(--amber);
         }
+
+        @media (max-width: 768px) {
+            .index-container {
+                padding: 24px 16px;
+            }
+
+            .index-header h1 {
+                font-size: 32px;
+            }
+
+            .index-header .subtitle {
+                font-size: 16px;
+            }
+
+            .top-section {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .live-metrics,
+            .trading-panel {
+                padding: 20px;
+            }
+
+            .content-section h3 {
+                font-size: 14px;
+            }
+
+            .bar-label {
+                min-width: 120px;
+                font-size: 11px;
+            }
+
+            .top-bar-center {
+                gap: 16px;
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 393px) {
+            .index-header h1 {
+                font-size: 24px;
+            }
+
+            .index-header .subtitle {
+                font-size: 14px;
+            }
+
+            .live-metrics,
+            .trading-panel {
+                padding: 16px;
+            }
+
+            .metric-row {
+                font-size: 12px;
+            }
+
+            .bar-label {
+                min-width: 100px;
+                font-size: 10px;
+            }
+
+            .top-bar-center {
+                gap: 12px;
+                font-size: 10px;
+            }
+        }
     </style>
 </head>
 <body>
