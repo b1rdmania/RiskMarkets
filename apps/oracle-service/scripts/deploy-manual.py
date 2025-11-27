@@ -33,36 +33,39 @@ except ImportError:
     sys.exit(1)
 
 # Get environment variables
-HL_API_KEY = os.getenv('HL_API_KEY')
-HL_API_SECRET = os.getenv('HL_API_SECRET')
+HL_API_PRIVATE_KEY = os.getenv('HL_API_PRIVATE_KEY')
+HL_API_ADDRESS = os.getenv('HL_API_ADDRESS')
 HL_DEX_NAME = os.getenv('HL_DEX_NAME', 'XAU')
 HL_COIN_SYMBOL = os.getenv('HL_COIN_SYMBOL', 'XAU-TEST')
 INITIAL_ORACLE_PRICE = os.getenv('INITIAL_ORACLE_PRICE', '1924.5')
 
-if not HL_API_KEY or not HL_API_SECRET:
-    print("❌ Error: Missing HL_API_KEY or HL_API_SECRET")
+if not HL_API_PRIVATE_KEY:
+    print("❌ Error: Missing HL_API_PRIVATE_KEY")
+    sys.exit(1)
+
+# Verify signer address
+acct = eth_account.Account.from_key(HL_API_PRIVATE_KEY)
+print(f"✅ Python signer address: {acct.address}")
+
+EXPECTED_ADDRESS = "0x86C672b3553576Fa436539F21BD660F44Ce10a86"
+if acct.address.lower() != EXPECTED_ADDRESS.lower():
+    print(f"❌ Error: Signer address mismatch!")
+    print(f"   Expected: {EXPECTED_ADDRESS}")
+    print(f"   Got:      {acct.address}")
+    print(f"   You are using the wrong key or wrong env file.")
     sys.exit(1)
 
 def deploy_manual():
-    """Manually construct payload without maxGas: null."""
+    """Manually construct payload using registerAsset2."""
     
     print("\n🚀 Manual HIP-3 Deployment (using registerAsset2)")
     print(f"   DEX: {HL_DEX_NAME}")
     print(f"   Coin: {HL_COIN_SYMBOL}")
     print(f"   Initial Oracle Price: {INITIAL_ORACLE_PRICE}\n")
     
-    # Initialize wallet
-    # Note: Hyperliquid API uses sub-wallets, but L1 actions should be signed by main wallet
-    # The main wallet address is: 0xC0D35857e87F5ADe6055714706fb4dFD96DE087E
-    try:
-        wallet = eth_account.Account.from_key(HL_API_SECRET)
-        wallet_address = wallet.address
-        print(f"✅ Wallet from secret: {wallet_address}")
-        
-        print(f"✅ Using API wallet: {wallet_address}\n")
-    except Exception as e:
-        print(f"❌ Error initializing wallet: {e}")
-        sys.exit(1)
+    # Use the verified wallet
+    wallet = acct
+    wallet_address = acct.address
     
     # Manually construct the action using registerAsset2 (current HIP-3 spec)
     # Based on: https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/hip-3-deployer-actions

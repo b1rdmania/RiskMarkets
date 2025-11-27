@@ -114,8 +114,14 @@ export async function publishToHyperliquid(value: number): Promise<PublishResult
   const activePool = null;  // No vault for setOracle
   const isMainnet = false;  // We're on testnet
 
-  // Create wallet from private key
-  const wallet = new Wallet(config.hlApiSecret);
+  // Create wallet from private key (must be HL_API_PRIVATE_KEY)
+  const wallet = new Wallet(config.hlApiPrivateKey);
+  
+  // Verify signer address matches expected API wallet
+  const expectedAddress = '0x86C672b3553576Fa436539F21BD660F44Ce10a86';
+  if (wallet.address.toLowerCase() !== expectedAddress.toLowerCase()) {
+    throw new Error(`Signer address mismatch! Expected ${expectedAddress}, got ${wallet.address}`);
+  }
 
   // Sign using proper L1 action signing
   const signature = await signL1Action(
