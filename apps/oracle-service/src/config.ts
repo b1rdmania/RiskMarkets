@@ -23,8 +23,12 @@ export interface ServiceConfig {
   hlUrl: string;
   hlApiKey: string;
   hlApiSecret: string;
+  hlMarketId?: string;
+  hlPublishEnabled: boolean;
   publishIntervalMs: number;
   staleThresholdMs: number;
+  minPublishIntervalMs: number;
+  priceChangeEpsilon: number;
 }
 
 function required(name: string, fallback?: string): string {
@@ -44,6 +48,10 @@ export const config: ServiceConfig = {
   hlUrl: required('HL_TESTNET_URL'),
   hlApiKey: required('HL_API_KEY'),
   hlApiSecret: required('HL_API_SECRET'),
+  hlMarketId: process.env.HL_MARKET_ID,
+  hlPublishEnabled: (process.env.HL_PUBLISH_ENABLED ?? 'false').toLowerCase() === 'true',
   publishIntervalMs: Number(process.env.PUBLISH_INTERVAL_MS ?? 3000),
   staleThresholdMs: Number(process.env.STALE_THRESHOLD_MS ?? 10000),
+  minPublishIntervalMs: Number(process.env.MIN_PUBLISH_INTERVAL_MS ?? 10000),
+  priceChangeEpsilon: Number(process.env.PRICE_EPSILON ?? 0.01),
 };

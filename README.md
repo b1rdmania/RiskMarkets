@@ -126,6 +126,15 @@ Environment guardrails ensure it only runs when `NETWORK=testnet`. When the serv
 
 Use the whitepaper to track the day-by-day plan for wiring Pyth and Hyperliquid.
 
+### Day 2–3 Notes
+- Real Pyth data fetch is already wired (Hermes API). Update `PYTH_FEED_ID`, `PYTH_API_URL`, `PYTH_CLUSTER` in your `.env.testnet`.
+- Hyperliquid publishing is disabled by default. Set `HL_PUBLISH_ENABLED=true` plus `HL_MARKET_ID`, `HL_API_KEY`, `HL_API_SECRET`, and a valid `HL_TESTNET_URL` when you’re ready to send prices to HL testnet.
+- Tuning knobs:
+  - `PUBLISH_INTERVAL_MS` – fetch/publish cadence (default 3s)
+  - `MIN_PUBLISH_INTERVAL_MS` – force publish at least every 10s even if price hasn’t moved
+  - `PRICE_EPSILON` – minimum price delta before we publish again
+  - `STALE_THRESHOLD_MS` – mark data stale if Pyth hasn’t updated within this window
+
 ## Next Steps
 
 - Deploy to Vercel (see DEPLOYMENT.md)

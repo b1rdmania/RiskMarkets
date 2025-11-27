@@ -33,6 +33,7 @@ app.get('/price', (_req, res) => {
 async function main() {
   console.log(`[boot] WAR.MARKET oracle-service running on network=${config.network}`);
   console.log(`[boot] Using feed=${config.pythFeedId}`);
+  console.log(`[boot] Hyperliquid publish ${config.hlPublishEnabled ? 'ENABLED' : 'DISABLED'}`);
 
   setInterval(async () => {
     try {
@@ -47,12 +48,15 @@ async function main() {
         return;
       }
 
-      await publishToHyperliquid(value);
+      const result = await publishToHyperliquid(value);
+      if (result.skipped && result.reason) {
+        console.log(`[HL] skipped publish: ${result.reason}`);
+      }
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       priceState.stale = true;
       priceState.lastError = message;
-      console.error('[loop] error', message);
+      console.error('[loop] error', err);
     }
   }, config.publishIntervalMs);
 
