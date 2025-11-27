@@ -2,6 +2,7 @@ import express from 'express';
 import { config } from './config';
 import { fetchPythPrice } from './services/pyth';
 import { publishToHyperliquid } from './services/hyperliquid';
+import { fetchFeedMetadata, listAvailableFeeds, validateFeedId } from './services/pyth-metadata';
 import { priceState, publishStats } from './state';
 
 const app = express();
@@ -30,10 +31,45 @@ app.get('/price', (_req, res) => {
   });
 });
 
+app.get('/feeds', async (_req, res) => {
+  const query = _req.query.search as string | undefined;
+  const feeds = await listAvailableFeeds(query);
+  res.json({ feeds });
+});
+
+app.get('/feeds/:feedId', async (_req, res) => {
+  const feedId = _req.params.feedId;
+  const metadata = await fetchFeedMetadata(feedId);
+  if (metadata) {
+    res.json(metadata);
+  } else {
+    res.status(404).json({ error: 'Feed not found' });
+  }
+});
+
+app.get('/feeds/:feedId/validate', async (_req, res) => {
+  const feedId = _req.params.feedId;
+  const isValid = await validateFeedId(feedId);
+  res.json({ feedId, valid: isValid });
+});
+
 async function main() {
   console.log(`[boot] WAR.MARKET oracle-service running on network=${config.network}`);
   console.log(`[boot] Using feed=${config.pythFeedId}`);
   console.log(`[boot] Hyperliquid publish ${config.hlPublishEnabled ? 'ENABLED' : 'DISABLED'}`);
+  
+  // Validate feed ID on startup
+  console.log(`[boot] Validating feed ID...`);
+  const isValid = await validateFeedId(config.pythFeedId);
+  if (!isValid) {
+    console.warn(`[boot] WARNING: Feed ID ${config.pythFeedId} validation failed. Service will continue but may fail to fetch prices.`);
+  } else {
+    const metadata = await fetchFeedMetadata(config.pythFeedId);
+    if (metadata) {
+      console.log(`[boot] Feed metadata: ${metadata.symbol || 'unknown'} (${metadata.description || 'no description'})`);
+    }
+    console.log(`[boot] Feed ID validated successfully`);
+  }
 
   setInterval(async () => {
     try {
