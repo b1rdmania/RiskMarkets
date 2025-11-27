@@ -28,6 +28,8 @@ yarn-error.log*
 .env
 .env.local
 .env.*.local
+.env.testnet
+apps/oracle-service/.env.testnet
 
 # Build outputs (if any)
 dist/
