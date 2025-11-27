@@ -13,14 +13,10 @@
  *   - HL_DEX_NAME (optional, defaults to "WARMARKET")
  */
 
-import crypto from 'crypto';
+import { Wallet } from 'ethers';
 import { request } from 'undici';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
-
-// For Ethereum wallet signing
-// Note: Hyperliquid uses wallet signature, not HMAC
-// We'll need to use ethereum signing - for now, let's try the API wallet approach
 
 // Load environment
 const envFile = process.env.ENV_FILE ?? '.env.testnet';
@@ -40,89 +36,114 @@ const API_KEY: string = HL_API_KEY;
 const API_SECRET: string = HL_API_SECRET;
 
 /**
- * Register Asset Action
+ * Register Asset Action for HIP-3 Market Creation
  * 
- * This is the first step in deploying a HIP-3 market.
- * Registers the asset with market parameters.
+ * Based on Hyperliquid docs, registerAsset requires:
+ * - coin: string (asset symbol, e.g., "XAU-TEST")
+ * - szDecimals: number (size decimals)
+ * - oraclePx: string (initial oracle price as string)
+ * - marginTableId: number (margin table ID, typically 0)
+ * - onlyIsolated: boolean (whether isolated margin only)
  */
 interface RegisterAsset {
   type: 'registerAsset';
-  name: string;  // Asset name (e.g., "GOLD-TEST")
+  coin: string;  // Asset symbol (e.g., "XAU-TEST")
   szDecimals: number;  // Size decimals (recommended: 0-2 for $1-10 increments)
-  maxLeverage?: number;  // Maximum leverage (default: 20)
-  oracle?: {
-    // Oracle definition - points to your oracle service
-    // This may need to be your API wallet address or a contract address
-    address?: string;
-  };
+  oraclePx: string;  // Initial oracle price as string (e.g., "1924.55")
+  marginTableId: number;  // Margin table ID (typically 0)
+  onlyIsolated: boolean;  // Isolated margin only (false for cross margin)
 }
 
 /**
- * Deploy Perpetual Market
+ * Create HIP-3 Market (createMarket)
  * 
- * Sends the registerAsset action to deploy a new HIP-3 market.
+ * Sends the registerAsset action to create a new HIP-3 perpetual market.
+ * Returns the assetId which becomes HL_MARKET_ID.
  */
-async function deployMarket(config: {
-  assetName: string;
+async function createMarket(config: {
+  symbol: string;  // Market symbol (e.g., "XAU-TEST")
   szDecimals: number;
-  maxLeverage?: number;
-}): Promise<void> {
-  const { assetName, szDecimals, maxLeverage = 20 } = config;
+  initialOraclePrice: string;  // Initial price as string (e.g., "1924.55")
+  marginTableId?: number;
+  onlyIsolated?: boolean;
+}): Promise<{ assetId: number; symbol: string }> {
+  const { 
+    symbol, 
+    szDecimals, 
+    initialOraclePrice,
+    marginTableId = 0,
+    onlyIsolated = false 
+  } = config;
 
-  console.log(`\n🚀 Deploying HIP-3 market: ${assetName}`);
-  console.log(`   DEX: ${HL_DEX_NAME}`);
+  console.log(`\n🚀 Creating HIP-3 market: ${symbol}`);
+  console.log(`   Initial Oracle Price: ${initialOraclePrice}`);
   console.log(`   Size Decimals: ${szDecimals}`);
-  console.log(`   Max Leverage: ${maxLeverage}x\n`);
+  console.log(`   Margin Table ID: ${marginTableId}`);
+  console.log(`   Isolated Only: ${onlyIsolated}\n`);
 
-  // Try different action structures - Hyperliquid API might expect different format
-  // Option 1: Nested perpDeploy
+  // Hyperliquid perpDeploy action with registerAsset
   const action = {
     type: 'perpDeploy',
     registerAsset: {
       type: 'registerAsset',
-      name: assetName,
+      coin: symbol,
       szDecimals,
-      maxLeverage,
+      oraclePx: initialOraclePrice,  // Initial oracle price as string
+      marginTableId,
+      onlyIsolated,
     },
   };
 
   // Hyperliquid API requires: action, nonce, and signature
-  // The signature is a wallet signature (Ethereum signature), not HMAC
-  // For API wallets, we may need to use the private key to sign
+  // Nonce: current timestamp in milliseconds
   const nonce = Date.now();
   
-  // Create the full request body with nonce
-  const requestBody = {
-    action: payload.action,
-    nonce,
-    // signature will be added after signing
-  };
-
-  const bodyToSign = JSON.stringify(requestBody);
+  // Create wallet from private key
+  const wallet = new Wallet(API_SECRET);
   
-  // TODO: Use proper Ethereum wallet signing here
-  // For now, trying HMAC as a fallback (may not work)
-  // Hyperliquid API wallets might use different auth - need to verify
-  const signature = crypto.createHmac('sha256', API_SECRET)
-    .update(bodyToSign)
-    .digest('hex');
+  // Hyperliquid signs: action + nonce
+  // The signature format is specific to Hyperliquid's signing scheme
+  // Based on Python SDK, we need to sign the action object + nonce
+  const messageToSign = {
+    action,
+    nonce,
+  };
+  
+  // Sign the message - Hyperliquid uses a specific signing format
+  // The Python SDK uses: sign_l1_action(action, wallet, nonce)
+  // For now, we'll sign the JSON stringified action + nonce
+  const message = JSON.stringify(messageToSign);
+  
+  // Get the signature - Hyperliquid expects a specific format
+  // Note: This may need adjustment based on Hyperliquid's exact signing scheme
+  const signature = await wallet.signMessage(message);
+  
+  // Parse the signature into r, s, v format
+  // Ethereum signatures are 65 bytes: r (32) + s (32) + v (1)
+  const sigBytes = Buffer.from(signature.slice(2), 'hex');
+  const r = '0x' + sigBytes.slice(0, 32).toString('hex');
+  const s = '0x' + sigBytes.slice(32, 64).toString('hex');
+  const v = sigBytes[64];
 
-  // Add signature to request body
-  const finalBody = {
-    ...requestBody,
+  // Create final request body
+  const requestBody = {
+    action,
+    nonce,
     signature: {
-      r: signature.slice(0, 64),  // Placeholder - need proper Ethereum signature
-      s: signature.slice(64, 128),
-      v: 27,
+      r,
+      s,
+      v,
     },
   };
 
-  const body = JSON.stringify(finalBody);
+  const body = JSON.stringify(requestBody);
   const endpoint = `${HL_URL}/exchange`;
   
   console.log(`📡 Sending to: ${endpoint}`);
-  console.log(`📦 Payload (without signature):`, JSON.stringify({ ...finalBody, signature: '***HIDDEN***' }, null, 2));
-  // ⚠️ SECURITY: Never log HL_API_SECRET or full API keys in production
+  console.log(`📦 Action:`, JSON.stringify(action, null, 2));
+  console.log(`📦 Nonce: ${nonce}`);
+  console.log(`📦 Wallet Address: ${wallet.address}`);
+  // ⚠️ SECURITY: Never log HL_API_SECRET or full signatures in production
 
   try {
     const response = await request(endpoint, {
@@ -141,14 +162,32 @@ async function deployMarket(config: {
     }
 
     const result = JSON.parse(responseText);
-    console.log(`✅ Deployment successful!`);
-    console.log(`📋 Response:`, JSON.stringify(result, null, 2));
     
-    console.log(`\n📝 Next steps:`);
-    console.log(`   1. Update HL_MARKET_ID in .env.testnet: ${assetName}`);
-    console.log(`   2. Start your oracle service: npm run dev`);
-    console.log(`   3. Verify market appears on Hyperliquid testnet`);
-    console.log(`   4. Test price publishing via setOracle\n`);
+    if (result.status === 'ok' && result.response) {
+      // Extract assetId from response
+      // The exact structure may vary - adjust based on actual response
+      const assetId = result.response.assetId || result.response.data?.assetId;
+      const marketSymbol = result.response.symbol || symbol;
+      
+      console.log(`✅ Market created successfully!`);
+      console.log(`📋 Response:`, JSON.stringify(result, null, 2));
+      console.log(`\n🎯 Market Details:`);
+      console.log(`   Asset ID: ${assetId}`);
+      console.log(`   Symbol: ${marketSymbol}`);
+      
+      console.log(`\n📝 Next steps:`);
+      console.log(`   1. Update .env.testnet:`);
+      console.log(`      HL_MARKET_ID=${assetId}`);
+      console.log(`      HL_MARKET_SYMBOL=${marketSymbol}`);
+      console.log(`      HL_PUBLISH_ENABLED=true`);
+      console.log(`   2. Start your oracle service: npm run dev`);
+      console.log(`   3. Verify market at: https://app.hyperliquid-testnet.xyz/perps`);
+      console.log(`   4. Watch for price updates every ~3 seconds\n`);
+      
+      return { assetId, symbol: marketSymbol };
+    } else {
+      throw new Error(`Unexpected response format: ${responseText}`);
+    }
 
   } catch (error) {
     console.error(`❌ Error deploying market:`, error);
@@ -160,22 +199,29 @@ async function deployMarket(config: {
  * Main execution
  */
 async function main() {
-  // Deploy GOLD-TEST market (solo asset, recommended for v0)
+  // Create XAU-TEST market (gold, recommended for v0)
+  // Get initial price from Pyth or use a reasonable default
+  const initialPrice = process.env.INITIAL_ORACLE_PRICE || '1924.55';  // Default gold price
+  
   const marketConfig = {
-    assetName: 'GOLD-TEST',  // Asset name (<= 6 chars recommended)
+    symbol: 'XAU-TEST',  // Market symbol
     szDecimals: 2,  // For $0.01 increments (if price ~$2000)
-    maxLeverage: 20,  // 20x leverage
+    initialOraclePrice: initialPrice,  // Initial oracle price as string
+    marginTableId: 0,  // Default margin table
+    onlyIsolated: false,  // Allow cross margin
   };
 
-  console.log('🚀 Ready to deploy HIP-3 market on Hyperliquid testnet\n');
+  console.log('🚀 Ready to create HIP-3 market on Hyperliquid testnet\n');
   console.log('Market configuration:');
-  console.log(`  Asset: ${marketConfig.assetName}`);
+  console.log(`  Symbol: ${marketConfig.symbol}`);
+  console.log(`  Initial Oracle Price: $${marketConfig.initialOraclePrice}`);
   console.log(`  Size Decimals: ${marketConfig.szDecimals}`);
-  console.log(`  Max Leverage: ${marketConfig.maxLeverage}x`);
-  console.log(`  DEX: ${HL_DEX_NAME}\n`);
+  console.log(`  Margin Table ID: ${marketConfig.marginTableId}`);
+  console.log(`  Isolated Only: ${marketConfig.onlyIsolated}\n`);
 
-  // Deploy the market
-  await deployMarket(marketConfig);
+  // Create the market
+  const result = await createMarket(marketConfig);
+  console.log(`\n✅ Market created! Asset ID: ${result.assetId}`);
 }
 
 main().catch((error) => {
