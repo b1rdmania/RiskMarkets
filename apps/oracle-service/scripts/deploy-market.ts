@@ -93,6 +93,7 @@ async function deployMarket(config: {
   
   console.log(`📡 Sending to: ${endpoint}`);
   console.log(`📦 Payload:`, JSON.stringify(payload, null, 2));
+  // ⚠️ SECURITY: Never log HL_API_SECRET or full API keys in production
 
   try {
     const response = await request(endpoint, {
