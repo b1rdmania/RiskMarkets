@@ -9,8 +9,7 @@
  */
 
 import { pack } from 'msgpackr';
-import { keccak_256 } from '@noble/hashes/sha3';
-import { Wallet, TypedDataDomain, TypedDataField } from 'ethers';
+import { Wallet, TypedDataDomain, TypedDataField, keccak256 } from 'ethers';
 
 export interface L1ActionSignature {
   r: string;
@@ -94,8 +93,12 @@ function actionHash(
   combined.set(expiresBytes, offset);
 
   // 5. Keccak-256 hash
-  const hash = keccak_256(combined);
-  return new Uint8Array(hash);
+  // ethers keccak256 expects hex string, so convert bytes to hex first
+  const hexString = '0x' + Array.from(combined).map(b => b.toString(16).padStart(2, '0')).join('');
+  const hashHex = keccak256(hexString);
+  // Convert hex back to bytes
+  const hashBytes = Buffer.from(hashHex.slice(2), 'hex');
+  return new Uint8Array(hashBytes);
 }
 
 /**
@@ -115,6 +118,7 @@ function constructPhantomAgent(hash: Uint8Array, isMainnet: boolean): {
 /**
  * Create EIP-712 typed data payload for L1 action
  * Replicates Python: l1_payload(phantom_agent)
+ * Note: ethers.js doesn't require EIP712Domain in types (it's implicit)
  */
 function l1Payload(phantomAgent: { source: string; connectionId: string }): {
   domain: TypedDataDomain;
@@ -133,12 +137,6 @@ function l1Payload(phantomAgent: { source: string; connectionId: string }): {
       Agent: [
         { name: 'source', type: 'string' },
         { name: 'connectionId', type: 'bytes32' },
-      ],
-      EIP712Domain: [
-        { name: 'name', type: 'string' },
-        { name: 'version', type: 'string' },
-        { name: 'chainId', type: 'uint256' },
-        { name: 'verifyingContract', type: 'address' },
       ],
     },
     primaryType: 'Agent',
