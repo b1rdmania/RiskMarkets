@@ -31,12 +31,17 @@ except ImportError:
     sys.exit(1)
 
 # Get environment variables
-HL_API_PRIVATE_KEY = os.getenv('HL_API_PRIVATE_KEY')
+HL_MASTER_ADDRESS = os.getenv('HL_MASTER_ADDRESS')  # Master account
+HL_API_PRIVATE_KEY = os.getenv('HL_API_PRIVATE_KEY')  # API wallet private key
 HL_DEX_NAME = os.getenv('HL_DEX_NAME', 'XAU')
 HL_COIN_SYMBOL = os.getenv('HL_COIN_SYMBOL', 'XAU-TEST')
 
 if not HL_API_PRIVATE_KEY:
     print("❌ Error: Missing HL_API_PRIVATE_KEY")
+    sys.exit(1)
+
+if not HL_MASTER_ADDRESS:
+    print("❌ Error: Missing HL_MASTER_ADDRESS")
     sys.exit(1)
 
 # Get price from command line or stdin
@@ -60,16 +65,20 @@ def set_oracle(price: str):
     """Set oracle price using Python SDK (canonical signing)."""
     
     # Initialize wallet and exchange
-    wallet = eth_account.Account.from_key(HL_API_PRIVATE_KEY)
-    exchange = Exchange(wallet, constants.TESTNET_API_URL)
+    # Note: Exchange uses the wallet for signing, but master address is the account
+    api_wallet = eth_account.Account.from_key(HL_API_PRIVATE_KEY)
+    exchange = Exchange(api_wallet, constants.TESTNET_API_URL)
     
-    # Verify wallet address
-    EXPECTED_ADDRESS = "0x86C672b3553576Fa436539F21BD660F44Ce10a86"
-    if wallet.address.lower() != EXPECTED_ADDRESS.lower():
-        print(f"❌ Error: Wallet address mismatch")
-        print(f"   Expected: {EXPECTED_ADDRESS}")
-        print(f"   Got:      {wallet.address}")
+    # Verify API wallet address
+    EXPECTED_API_ADDRESS = "0x86C672b3553576Fa436539F21BD660F44Ce10a86"
+    if api_wallet.address.lower() != EXPECTED_API_ADDRESS.lower():
+        print(f"❌ Error: API wallet address mismatch")
+        print(f"   Expected: {EXPECTED_API_ADDRESS}")
+        print(f"   Got:      {api_wallet.address}")
         sys.exit(1)
+    
+    print(f"✅ API wallet (agent): {api_wallet.address}")
+    print(f"✅ Master account: {HL_MASTER_ADDRESS}")
     
     # Use SDK's perp_deploy_set_oracle (uses canonical signing)
     try:

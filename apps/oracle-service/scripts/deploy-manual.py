@@ -33,8 +33,9 @@ except ImportError:
     sys.exit(1)
 
 # Get environment variables
-HL_API_PRIVATE_KEY = os.getenv('HL_API_PRIVATE_KEY')
-HL_API_ADDRESS = os.getenv('HL_API_ADDRESS')
+HL_MASTER_ADDRESS = os.getenv('HL_MASTER_ADDRESS')  # Master account (where funds are)
+HL_API_ADDRESS = os.getenv('HL_API_ADDRESS')  # API wallet (agent)
+HL_API_PRIVATE_KEY = os.getenv('HL_API_PRIVATE_KEY')  # API wallet private key
 HL_DEX_NAME = os.getenv('HL_DEX_NAME', 'XAU')
 HL_COIN_SYMBOL = os.getenv('HL_COIN_SYMBOL', 'XAU-TEST')
 INITIAL_ORACLE_PRICE = os.getenv('INITIAL_ORACLE_PRICE', '1924.5')
@@ -43,16 +44,20 @@ if not HL_API_PRIVATE_KEY:
     print("❌ Error: Missing HL_API_PRIVATE_KEY")
     sys.exit(1)
 
-# Verify signer address
-acct = eth_account.Account.from_key(HL_API_PRIVATE_KEY)
-print(f"✅ Python signer address: {acct.address}")
+if not HL_MASTER_ADDRESS:
+    print("❌ Error: Missing HL_MASTER_ADDRESS")
+    sys.exit(1)
 
-EXPECTED_ADDRESS = "0x86C672b3553576Fa436539F21BD660F44Ce10a86"
-if acct.address.lower() != EXPECTED_ADDRESS.lower():
-    print(f"❌ Error: Signer address mismatch!")
-    print(f"   Expected: {EXPECTED_ADDRESS}")
+# Verify API wallet address from private key
+acct = eth_account.Account.from_key(HL_API_PRIVATE_KEY)
+print(f"✅ API wallet (agent) address: {acct.address}")
+print(f"✅ Master account address: {HL_MASTER_ADDRESS}")
+
+EXPECTED_API_ADDRESS = "0x86C672b3553576Fa436539F21BD660F44Ce10a86"
+if acct.address.lower() != EXPECTED_API_ADDRESS.lower():
+    print(f"❌ Error: API wallet address mismatch!")
+    print(f"   Expected: {EXPECTED_API_ADDRESS}")
     print(f"   Got:      {acct.address}")
-    print(f"   You are using the wrong key or wrong env file.")
     sys.exit(1)
 
 def deploy_manual():
@@ -89,7 +94,7 @@ def deploy_manual():
         "schema": {
           "fullName": f"{HL_DEX_NAME} Test DEX",
           "collateralToken": 0,
-          "oracleUpdater": wallet_address.lower(),
+          "oracleUpdater": HL_MASTER_ADDRESS.lower(),  # Use master address, not agent
         }
         }
     }
