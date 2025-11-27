@@ -68,9 +68,12 @@ def deploy_manual():
     print(f"   Coin: {HL_COIN_SYMBOL}")
     print(f"   Initial Oracle Price: {INITIAL_ORACLE_PRICE}\n")
     
-    # Use the verified wallet
+    # Use the verified wallet (agent for signing)
     wallet = acct
     wallet_address = acct.address
+    
+    # Initialize Exchange with agent wallet but master account address
+    exchange = Exchange(wallet, constants.TESTNET_API_URL, account_address=HL_MASTER_ADDRESS)
     
     # Manually construct the action using registerAsset2 (current HIP-3 spec)
     # Based on: https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/hip-3-deployer-actions

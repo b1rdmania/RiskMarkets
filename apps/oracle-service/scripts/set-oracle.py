@@ -65,9 +65,9 @@ def set_oracle(price: str):
     """Set oracle price using Python SDK (canonical signing)."""
     
     # Initialize wallet and exchange
-    # Note: Exchange uses the wallet for signing, but master address is the account
+    # Exchange uses agent wallet for signing, but master address is the account
     api_wallet = eth_account.Account.from_key(HL_API_PRIVATE_KEY)
-    exchange = Exchange(api_wallet, constants.TESTNET_API_URL)
+    exchange = Exchange(api_wallet, constants.TESTNET_API_URL, account_address=HL_MASTER_ADDRESS)
     
     # Verify API wallet address
     EXPECTED_API_ADDRESS = "0x86C672b3553576Fa436539F21BD660F44Ce10a86"
