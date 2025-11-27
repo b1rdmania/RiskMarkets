@@ -23,8 +23,9 @@ export interface ServiceConfig {
   hlUrl: string;
   hlApiKey: string;
   hlApiSecret: string;
-  hlMarketId?: string;
-  hlDexName?: string;  // DEX name for HIP-3 markets (<= 6 characters, e.g., "WARMARKET")
+  hlDexName?: string;  // DEX name for HIP-3 markets (2-4 chars, e.g., "XAU")
+  hlCoinSymbol?: string;  // Coin symbol (e.g., "XAU-TEST")
+  hlAssetId?: number;  // Numeric asset ID from meta.universe (for trading)
   hlPublishEnabled: boolean;
   hlOracleEndpoint?: string;
   publishIntervalMs: number;
@@ -50,8 +51,9 @@ export const config: ServiceConfig = {
   hlUrl: required('HL_TESTNET_URL'),
   hlApiKey: required('HL_API_KEY'),
   hlApiSecret: required('HL_API_SECRET'),
-  hlMarketId: process.env.HL_MARKET_ID,
-  hlDexName: process.env.HL_DEX_NAME ?? 'WARMARKET',  // Default DEX name for HIP-3
+  hlDexName: process.env.HL_DEX_NAME,  // DEX name (2-4 chars, e.g., "XAU")
+  hlCoinSymbol: process.env.HL_COIN_SYMBOL,  // Coin symbol (e.g., "XAU-TEST")
+  hlAssetId: process.env.HL_ASSET_ID ? Number(process.env.HL_ASSET_ID) : undefined,  // Asset ID for trading
   hlPublishEnabled: (process.env.HL_PUBLISH_ENABLED ?? 'false').toLowerCase() === 'true',
   hlOracleEndpoint: process.env.HL_ORACLE_ENDPOINT ?? '/exchange',  // Hyperliquid exchange endpoint
   publishIntervalMs: Number(process.env.PUBLISH_INTERVAL_MS ?? 3000),
