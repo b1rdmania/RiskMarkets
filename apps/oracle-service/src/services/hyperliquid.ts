@@ -1,7 +1,8 @@
-import crypto from 'crypto';
 import { request } from 'undici';
+import { Wallet } from 'ethers';
 import { config } from '../config';
 import { publishStats } from '../state';
+import { signL1Action } from '../utils/hyperliquid-signing';
 
 export interface PublishResult {
   ok: boolean;
@@ -95,6 +96,7 @@ export async function publishToHyperliquid(value: number): Promise<PublishResult
   };
   const externalPerpPxs = Object.entries(externalPerpPxsDict).sort(([a], [b]) => a.localeCompare(b));
 
+  // Build the action object (matches Python SDK structure)
   const action = {
     type: 'perpDeploy',
     setOracle: {
@@ -105,31 +107,36 @@ export async function publishToHyperliquid(value: number): Promise<PublishResult
     },
   };
 
-  // Hyperliquid requires: action, nonce (timestamp), signature
-  // Signature must be L1 action signature using sign_l1_action equivalent
-  // TODO: Implement proper L1 action signing (like Python SDK's sign_l1_action)
-  // For now, this is a placeholder that will need proper Ethereum signing
-  
+  // Hyperliquid L1 action signing
+  // Replicates Python SDK: sign_l1_action(wallet, action, None, timestamp, expires_after, is_mainnet)
   const nonce = Date.now();
-  const body = JSON.stringify({ action, nonce });
-  
-  // TODO: Replace with proper L1 action signing
-  // The Python SDK uses: sign_l1_action(wallet, action, None, timestamp, expires_after, is_mainnet)
-  // We need to replicate this in TypeScript using ethers.js
-  const signature = crypto.createHmac('sha256', config.hlApiSecret).update(body).digest('hex');
+  const expiresAfter = null;  // No expiration for oracle updates
+  const activePool = null;  // No vault for setOracle
+  const isMainnet = false;  // We're on testnet
+
+  // Create wallet from private key
+  const wallet = new Wallet(config.hlApiSecret);
+
+  // Sign using proper L1 action signing
+  const signature = await signL1Action(
+    wallet,
+    action,
+    activePool,
+    nonce,
+    expiresAfter,
+    isMainnet
+  );
 
   const endpoint = `${config.hlUrl}${config.hlOracleEndpoint}`;
   console.log(`[HL] Publishing setOracle: dex=${config.hlDexName}, coin=${config.hlCoinSymbol}, price=${priceStr}`);
 
-  // TODO: Proper signature format {r, s, v} from Ethereum L1 action signing
-  const requestBody = {
+  // Request body format matches Python SDK's _post_action
+  // Note: vaultAddress is only included for certain action types (not setOracle)
+  const requestBody: any = {
     action,
+    signature,
     nonce,
-    signature: {
-      r: signature.slice(0, 64),
-      s: signature.slice(64, 128),
-      v: 27,
-    },
+    expiresAfter: expiresAfter,  // null for oracle updates
   };
 
   const response = await request(endpoint, {
