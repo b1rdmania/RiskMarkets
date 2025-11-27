@@ -68,14 +68,6 @@ export async function publishToHyperliquid(value: number): Promise<PublishResult
   //   signature: { r, s, v }
   // }
 
-  if (!config.hlCoinSymbol) {
-    return { ok: false, reason: 'Missing HL_COIN_SYMBOL' };
-  }
-
-  if (!config.hlDexName) {
-    return { ok: false, reason: 'Missing HL_DEX_NAME' };
-  }
-
   // Format price as string (Hyperliquid expects string prices)
   const priceStr = value.toFixed(8);  // Use sufficient precision
 
