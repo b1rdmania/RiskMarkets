@@ -45,21 +45,27 @@ export async function publishToHyperliquid(value: number): Promise<PublishResult
     return { ok: false, reason: 'Missing HL_MARKET_ID' };
   }
 
+  // Hyperliquid oracle price update payload
+  // Note: Exact structure may vary - verify with HL docs or support
   const payload = {
     market: config.hlMarketId,
     price: value,
-    timestamp: new Date(now).toISOString(),
+    timestamp: Math.floor(now / 1000), // Unix timestamp in seconds
   };
 
   const body = JSON.stringify(payload);
   const signature = crypto.createHmac('sha256', config.hlApiSecret).update(body).digest('hex');
 
-  const response = await request(config.hlUrl, {
+  const endpoint = `${config.hlUrl}${config.hlOracleEndpoint}`;
+  console.log(`[HL] Publishing to ${endpoint}: price=${value.toFixed(2)}, market=${config.hlMarketId}`);
+
+  const response = await request(endpoint, {
     method: 'POST',
     body,
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `HL ${config.hlApiKey}:${signature}`,
+      'Authorization': `Bearer ${config.hlApiKey}:${signature}`,
+      'X-API-Key': config.hlApiKey,
     },
   });
 

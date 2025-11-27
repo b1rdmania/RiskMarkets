@@ -32,8 +32,11 @@ Backend service for fetching Pyth prices and publishing to Hyperliquid testnet.
    HL_API_KEY=<YOUR_TESTNET_API_KEY>
    HL_API_SECRET=<YOUR_TESTNET_API_SECRET>
    HL_MARKET_ID=<YOUR_MARKET_SYMBOL>
+   HL_ORACLE_ENDPOINT=/oracle/update
    HL_PUBLISH_ENABLED=true
    ```
+
+**Note:** The exact Hyperliquid oracle endpoint and payload structure may need verification with Hyperliquid documentation or support. The current implementation uses `/oracle/update` as a default, but this should be confirmed for HIP-3 markets.
 
 ## Running
 

@@ -25,6 +25,7 @@ export interface ServiceConfig {
   hlApiSecret: string;
   hlMarketId?: string;
   hlPublishEnabled: boolean;
+  hlOracleEndpoint?: string;
   publishIntervalMs: number;
   staleThresholdMs: number;
   minPublishIntervalMs: number;
@@ -50,6 +51,7 @@ export const config: ServiceConfig = {
   hlApiSecret: required('HL_API_SECRET'),
   hlMarketId: process.env.HL_MARKET_ID,
   hlPublishEnabled: (process.env.HL_PUBLISH_ENABLED ?? 'false').toLowerCase() === 'true',
+  hlOracleEndpoint: process.env.HL_ORACLE_ENDPOINT ?? '/oracle/update',
   publishIntervalMs: Number(process.env.PUBLISH_INTERVAL_MS ?? 3000),
   staleThresholdMs: Number(process.env.STALE_THRESHOLD_MS ?? 10000),
   minPublishIntervalMs: Number(process.env.MIN_PUBLISH_INTERVAL_MS ?? 10000),
