@@ -335,17 +335,17 @@
     <!-- Ticker -->
     <div class="ticker">
         <div class="ticker-content">
-            <span class="ticker-item">ECV ▴ Oil +2.1%</span>
+            <span class="ticker-item">GDR ▴ Defence rotation rising</span>
             <span class="ticker-separator">|</span>
-            <span class="ticker-item">APMS ▴ CNH Vol High</span>
+            <span class="ticker-item">ESV ▴ Oil and gas volatility elevated</span>
             <span class="ticker-separator">|</span>
-            <span class="ticker-item">GRMI ▴ Safe-Haven Demand Rising</span>
+            <span class="ticker-item">SHR ▴ Safe-haven flows increasing</span>
             <span class="ticker-separator">|</span>
-            <span class="ticker-item">ECV ▴ Oil +2.1%</span>
+            <span class="ticker-item">GDR ▴ Defence rotation rising</span>
             <span class="ticker-separator">|</span>
-            <span class="ticker-item">APMS ▴ CNH Vol High</span>
+            <span class="ticker-item">ESV ▴ Oil and gas volatility elevated</span>
             <span class="ticker-separator">|</span>
-            <span class="ticker-item">GRMI ▴ Safe-Haven Demand Rising</span>
+            <span class="ticker-item">SHR ▴ Safe-haven flows increasing</span>
             <span class="ticker-separator">|</span>
         </div>
     </div>
@@ -354,7 +354,7 @@
     <div class="markets-container">
         <div class="markets-header">
             <h1>MARKETS</h1>
-            <p class="text-small">Trade synthetic volatility indices built from neutral macro feeds.</p>
+            <p class="text-small">Trade synthetic macro-volatility indices built from neutral feeds.</p>
         </div>
 
         <div class="markets-table-wrapper">
@@ -370,57 +370,57 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                    <tr onclick="openDrawer('GDR')">
                         <td>
-                            <a href="ecv.html" style="color: inherit; text-decoration: none; display: block;">
-                                <div class="index-name">ECV</div>
-                                <div class="index-subtitle">ENERGY CORRIDOR VOLATILITY</div>
+                            <a href="gdr.html" style="color: inherit; text-decoration: none; display: block;" onclick="event.stopPropagation()">
+                                <div class="index-name">GDR</div>
+                                <div class="index-subtitle">DEFENCE ROTATION INDEX</div>
                             </a>
                         </td>
-                        <td class="price">$81.22</td>
-                        <td class="status-up">+1.47%</td>
+                        <td class="price">$102.44</td>
+                        <td class="status-up">+2.18%</td>
                         <td><div class="sparkline"></div></td>
-                        <td class="text-mono">$1.32M</td>
+                        <td class="text-mono">$1.67M</td>
                         <td>
                             <div class="action-buttons">
-                                <a href="ecv.html" style="text-decoration: none;"><button class="btn-action btn-long">LONG</button></a>
-                                <a href="ecv.html" style="text-decoration: none;"><button class="btn-action btn-short">SHORT</button></a>
+                                <a href="gdr.html" style="text-decoration: none;" onclick="event.stopPropagation()"><button class="btn-action btn-long">LONG</button></a>
+                                <a href="gdr.html" style="text-decoration: none;" onclick="event.stopPropagation()"><button class="btn-action btn-short">SHORT</button></a>
                             </div>
                         </td>
                     </tr>
-                    <tr>
+                    <tr onclick="openDrawer('ESV')">
                         <td>
-                            <a href="apms.html" style="color: inherit; text-decoration: none; display: block;">
-                                <div class="index-name">APMS</div>
-                                <div class="index-subtitle">ASIA-PACIFIC MACRO STRESS</div>
+                            <a href="esv.html" style="color: inherit; text-decoration: none; display: block;" onclick="event.stopPropagation()">
+                                <div class="index-name">ESV</div>
+                                <div class="index-subtitle">ENERGY SHOCK VOLATILITY</div>
                             </a>
                         </td>
-                        <td class="price">$54.89</td>
-                        <td class="status-up">+0.82%</td>
+                        <td class="price">$88.12</td>
+                        <td class="status-up">+1.04%</td>
                         <td><div class="sparkline"></div></td>
-                        <td class="text-mono">$892K</td>
+                        <td class="text-mono">$2.41M</td>
                         <td>
                             <div class="action-buttons">
-                                <a href="apms.html" style="text-decoration: none;"><button class="btn-action btn-long">LONG</button></a>
-                                <a href="apms.html" style="text-decoration: none;"><button class="btn-action btn-short">SHORT</button></a>
+                                <a href="esv.html" style="text-decoration: none;" onclick="event.stopPropagation()"><button class="btn-action btn-long">LONG</button></a>
+                                <a href="esv.html" style="text-decoration: none;" onclick="event.stopPropagation()"><button class="btn-action btn-short">SHORT</button></a>
                             </div>
                         </td>
                     </tr>
-                    <tr>
+                    <tr onclick="openDrawer('SHR')">
                         <td>
-                            <a href="grmi.html" style="color: inherit; text-decoration: none; display: block;">
-                                <div class="index-name">GRMI</div>
-                                <div class="index-subtitle">GLOBAL RISK MOMENTUM INDEX</div>
+                            <a href="shr.html" style="color: inherit; text-decoration: none; display: block;" onclick="event.stopPropagation()">
+                                <div class="index-name">SHR</div>
+                                <div class="index-subtitle">SAFE HAVEN ROTATION</div>
                             </a>
                         </td>
-                        <td class="price">$72.15</td>
-                        <td class="status-down">-0.23%</td>
+                        <td class="price">$74.55</td>
+                        <td class="status-down">-0.33%</td>
                         <td><div class="sparkline"></div></td>
-                        <td class="text-mono">$2.14M</td>
+                        <td class="text-mono">$1.12M</td>
                         <td>
                             <div class="action-buttons">
-                                <a href="grmi.html" style="text-decoration: none;"><button class="btn-action btn-long">LONG</button></a>
-                                <a href="grmi.html" style="text-decoration: none;"><button class="btn-action btn-short">SHORT</button></a>
+                                <a href="shr.html" style="text-decoration: none;" onclick="event.stopPropagation()"><button class="btn-action btn-long">LONG</button></a>
+                                <a href="shr.html" style="text-decoration: none;" onclick="event.stopPropagation()"><button class="btn-action btn-short">SHORT</button></a>
                             </div>
                         </td>
                     </tr>
