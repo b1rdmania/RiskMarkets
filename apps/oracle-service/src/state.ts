@@ -2,6 +2,7 @@ export interface PriceSnapshot {
   value: number;
   timestamp: number;
   stale: boolean;
+  lastError?: string;
 }
 
 export interface PublishStats {
@@ -13,6 +14,7 @@ export const priceState: PriceSnapshot = {
   value: 0,
   timestamp: 0,
   stale: true,
+  lastError: undefined,
 };
 
 export const publishStats: PublishStats = {

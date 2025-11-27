@@ -15,6 +15,7 @@ app.get('/health', (_req, res) => {
     lastUpdate: priceState.timestamp ? new Date(priceState.timestamp).toISOString() : null,
     stale: priceState.stale,
     publishes: publishStats.totalPublishes,
+    error: priceState.lastError ?? null,
   });
 });
 
@@ -35,10 +36,23 @@ async function main() {
 
   setInterval(async () => {
     try {
-      const { value } = await fetchPythPrice(config.pythFeedId);
+      const { value, timestamp } = await fetchPythPrice(config.pythFeedId);
+      priceState.value = value;
+      priceState.timestamp = timestamp;
+      priceState.stale = Date.now() - timestamp > config.staleThresholdMs;
+      priceState.lastError = undefined;
+
+      if (priceState.stale) {
+        console.warn('[price] stale data detected, skipping publish');
+        return;
+      }
+
       await publishToHyperliquid(value);
     } catch (err) {
-      console.error('[loop] error', err);
+      const message = err instanceof Error ? err.message : String(err);
+      priceState.stale = true;
+      priceState.lastError = message;
+      console.error('[loop] error', message);
     }
   }, config.publishIntervalMs);
 

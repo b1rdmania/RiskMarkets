@@ -18,10 +18,13 @@ export interface ServiceConfig {
   network: string;
   port: number;
   pythFeedId: string;
+  pythApiUrl: string;
+  pythCluster?: string;
   hlUrl: string;
   hlApiKey: string;
   hlApiSecret: string;
   publishIntervalMs: number;
+  staleThresholdMs: number;
 }
 
 function required(name: string, fallback?: string): string {
@@ -36,8 +39,11 @@ export const config: ServiceConfig = {
   network: NETWORK,
   port: Number(process.env.PORT ?? 4000),
   pythFeedId: required('PYTH_FEED_ID'),
+  pythApiUrl: required('PYTH_API_URL', 'https://hermes-beta.pyth.network/api'),
+  pythCluster: process.env.PYTH_CLUSTER,
   hlUrl: required('HL_TESTNET_URL'),
   hlApiKey: required('HL_API_KEY'),
   hlApiSecret: required('HL_API_SECRET'),
   publishIntervalMs: Number(process.env.PUBLISH_INTERVAL_MS ?? 3000),
+  staleThresholdMs: Number(process.env.STALE_THRESHOLD_MS ?? 10000),
 };
