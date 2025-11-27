@@ -29,10 +29,10 @@ Three complete mockup pages showcasing the WAR.MARKET brand identity:
 - Footer with links
 
 ### `terminal.html` — Trading Terminal
-- Top navigation bar with Markets/riskHYPE/Points/$RISK links
-- Scrolling tension ticker with data signals
-- Markets table with 5 indices (ECV, APMS, GRMI, EASCS, EUVI)
-- Clickable rows that open trading drawer
+- Top navigation bar with Markets/Stake/About/$RISK links
+- Scrolling tension ticker with neutral data signals
+- Markets table with three active indices (GDR, ESV, SHR)
+- Clickable rows that open a trading drawer
 - Side drawer with chart placeholder, order panel, oracle breakdown, stress bar
 - Bottom global risk meter
 - Visual CLI prompts in corner
@@ -105,6 +105,26 @@ Ready to deploy to Vercel! See [DEPLOYMENT.md](DEPLOYMENT.md) for full instructi
 2. Go to [vercel.com](https://vercel.com) → Import Project
 3. Select `b1rdmania/RiskMarkets`
 4. Deploy!
+
+## Oracle Service (Testnet Backend)
+
+The testnet oracle lives inside this repo at `apps/oracle-service`. It follows the whitepaper in `docs/whitepaper-v0.2.md` and currently exposes stubbed `/health` and `/price` endpoints while we wire the real data sources.
+
+### Day 1 Setup
+
+```bash
+cd apps/oracle-service
+npm install
+cp .env.testnet.example .env.testnet   # fill in feed + HL creds when ready
+npm run dev                            # starts ts-node-dev with hot reload
+```
+
+Environment guardrails ensure it only runs when `NETWORK=testnet`. When the service is running you can hit:
+
+- `http://localhost:4000/health`
+- `http://localhost:4000/price`
+
+Use the whitepaper to track the day-by-day plan for wiring Pyth and Hyperliquid.
 
 ## Next Steps
 
