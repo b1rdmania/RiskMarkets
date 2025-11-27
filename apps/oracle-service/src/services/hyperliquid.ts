@@ -1,8 +1,8 @@
 import { request } from 'undici';
-import { Wallet } from 'ethers';
+import { execSync } from 'child_process';
+import * as path from 'path';
 import { config } from '../config';
 import { publishStats } from '../state';
-import { signL1Action } from '../utils/hyperliquid-signing';
 
 export interface PublishResult {
   ok: boolean;
@@ -96,72 +96,42 @@ export async function publishToHyperliquid(value: number): Promise<PublishResult
   };
   const externalPerpPxs = Object.entries(externalPerpPxsDict).sort(([a], [b]) => a.localeCompare(b));
 
-  // Build the action object (matches Python SDK structure)
-  const action = {
-    type: 'perpDeploy',
-    setOracle: {
-      dex: config.hlDexName,
-      oraclePxs,  // Sorted array of [coin, price] pairs
-      markPxs,  // List of sorted arrays (empty for now)
-      externalPerpPxs,  // Sorted array of [coin, price] pairs
-    },
-  };
-
-  // Hyperliquid L1 action signing
-  // Replicates Python SDK: sign_l1_action(wallet, action, None, timestamp, expires_after, is_mainnet)
-  const nonce = Date.now();
-  const expiresAfter = null;  // No expiration for oracle updates
-  const activePool = null;  // No vault for setOracle
-  const isMainnet = false;  // We're on testnet
-
-  // Create wallet from private key (must be HL_API_PRIVATE_KEY)
-  const wallet = new Wallet(config.hlApiPrivateKey);
+  // Use Python SDK for setOracle (canonical signing implementation)
+  // This avoids the message hash mismatch issue described in Hyperliquid docs
+  const scriptPath = path.join(__dirname, '../../scripts/set-oracle.py');
   
-  // Verify signer address matches expected API wallet
-  const expectedAddress = '0x86C672b3553576Fa436539F21BD660F44Ce10a86';
-  if (wallet.address.toLowerCase() !== expectedAddress.toLowerCase()) {
-    throw new Error(`Signer address mismatch! Expected ${expectedAddress}, got ${wallet.address}`);
+  console.log(`[HL] Publishing setOracle via Python SDK: dex=${config.hlDexName}, coin=${config.hlCoinSymbol}, price=${priceStr}`);
+  
+  try {
+    // Call Python script with price
+    const output = execSync(
+      `python3 "${scriptPath}" "${priceStr}"`,
+      {
+        cwd: path.join(__dirname, '../..'),
+        encoding: 'utf-8',
+        env: {
+          ...process.env,
+          NETWORK: config.network,
+        },
+      }
+    );
+    
+    const result = JSON.parse(output.trim());
+    
+    if (!result.ok) {
+      throw new Error(`HL publish failed: ${result.response || result.error || 'Unknown error'}`);
+    }
+    
+    console.log(`[HL] setOracle successful: ${result.response || 'ok'}`);
+
+    lastPublishedValue = value;
+    lastPublishTimestamp = now;
+    publishStats.lastPublish = now;
+    publishStats.totalPublishes += 1;
+
+    return { ok: true };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`HL publish error: ${message}`);
   }
-
-  // Sign using proper L1 action signing
-  const signature = await signL1Action(
-    wallet,
-    action,
-    activePool,
-    nonce,
-    expiresAfter,
-    isMainnet
-  );
-
-  const endpoint = `${config.hlUrl}${config.hlOracleEndpoint}`;
-  console.log(`[HL] Publishing setOracle: dex=${config.hlDexName}, coin=${config.hlCoinSymbol}, price=${priceStr}`);
-
-  // Request body format matches Python SDK's _post_action
-  // Note: vaultAddress is only included for certain action types (not setOracle)
-  const requestBody: any = {
-    action,
-    signature,
-    nonce,
-    expiresAfter: expiresAfter,  // null for oracle updates
-  };
-
-  const response = await request(endpoint, {
-    method: 'POST',
-    body: JSON.stringify(requestBody),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
-  if (response.statusCode >= 400) {
-    const text = await response.body.text();
-    throw new Error(`HL publish failed (${response.statusCode}): ${text}`);
-  }
-
-  lastPublishedValue = value;
-  lastPublishTimestamp = now;
-  publishStats.lastPublish = now;
-  publishStats.totalPublishes += 1;
-
-  return { ok: true };
 }
