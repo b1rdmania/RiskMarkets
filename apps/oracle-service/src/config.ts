@@ -24,6 +24,7 @@ export interface ServiceConfig {
   hlApiKey: string;
   hlApiSecret: string;
   hlMarketId?: string;
+  hlDexName?: string;  // DEX name for HIP-3 markets (<= 6 characters, e.g., "WARMARKET")
   hlPublishEnabled: boolean;
   hlOracleEndpoint?: string;
   publishIntervalMs: number;
@@ -50,8 +51,9 @@ export const config: ServiceConfig = {
   hlApiKey: required('HL_API_KEY'),
   hlApiSecret: required('HL_API_SECRET'),
   hlMarketId: process.env.HL_MARKET_ID,
+  hlDexName: process.env.HL_DEX_NAME ?? 'WARMARKET',  // Default DEX name for HIP-3
   hlPublishEnabled: (process.env.HL_PUBLISH_ENABLED ?? 'false').toLowerCase() === 'true',
-  hlOracleEndpoint: process.env.HL_ORACLE_ENDPOINT ?? '/oracle/update',
+  hlOracleEndpoint: process.env.HL_ORACLE_ENDPOINT ?? '/exchange',  // Hyperliquid exchange endpoint
   publishIntervalMs: Number(process.env.PUBLISH_INTERVAL_MS ?? 3000),
   staleThresholdMs: Number(process.env.STALE_THRESHOLD_MS ?? 10000),
   minPublishIntervalMs: Number(process.env.MIN_PUBLISH_INTERVAL_MS ?? 10000),

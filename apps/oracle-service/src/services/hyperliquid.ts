@@ -45,19 +45,42 @@ export async function publishToHyperliquid(value: number): Promise<PublishResult
     return { ok: false, reason: 'Missing HL_MARKET_ID' };
   }
 
-  // Hyperliquid oracle price update payload
-  // Note: Exact structure may vary - verify with HL docs or support
+  // Hyperliquid setOracle action for HIP-3 markets
+  // Based on: https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/hip-3-deployer-actions
+  // 
+  // Note: Authentication method needs verification - Hyperliquid may use:
+  // 1. Wallet signature (like Python SDK)
+  // 2. API key + HMAC (current implementation)
+  // 3. API key only
+  //
+  // The exact endpoint and auth method should be verified with Hyperliquid testnet API
+
+  if (!config.hlMarketId) {
+    return { ok: false, reason: 'Missing HL_MARKET_ID' };
+  }
+
+  // Format price as string (Hyperliquid expects string prices)
+  const priceStr = value.toFixed(8);  // Use sufficient precision
+
+  // setOracle action structure for HIP-3
+  const action = {
+    type: 'setOracle',
+    dex: config.hlDexName || 'WARMARKET',
+    oraclePxs: [[config.hlMarketId, priceStr]],  // Array of [asset, price] pairs, sorted by asset
+    markPxs: [],  // Optional: can provide mark prices for better price discovery
+  };
+
   const payload = {
-    market: config.hlMarketId,
-    price: value,
-    timestamp: Math.floor(now / 1000), // Unix timestamp in seconds
+    action,
   };
 
   const body = JSON.stringify(payload);
+  
+  // Try HMAC signature (may need to switch to wallet signature based on actual API)
   const signature = crypto.createHmac('sha256', config.hlApiSecret).update(body).digest('hex');
 
   const endpoint = `${config.hlUrl}${config.hlOracleEndpoint}`;
-  console.log(`[HL] Publishing to ${endpoint}: price=${value.toFixed(2)}, market=${config.hlMarketId}`);
+  console.log(`[HL] Publishing setOracle to ${endpoint}: asset=${config.hlMarketId}, price=${priceStr}, dex=${config.hlDexName}`);
 
   const response = await request(endpoint, {
     method: 'POST',
