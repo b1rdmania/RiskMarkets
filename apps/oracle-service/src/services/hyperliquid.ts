@@ -41,8 +41,12 @@ export async function publishToHyperliquid(value: number): Promise<PublishResult
     return { ok: true, skipped: true, reason };
   }
 
-  if (!config.hlMarketId) {
-    return { ok: false, reason: 'Missing HL_MARKET_ID' };
+  if (!config.hlCoinSymbol) {
+    return { ok: false, reason: 'Missing HL_COIN_SYMBOL' };
+  }
+
+  if (!config.hlDexName) {
+    return { ok: false, reason: 'Missing HL_DEX_NAME' };
   }
 
   // Hyperliquid setOracle action for HIP-3 markets
