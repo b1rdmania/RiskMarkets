@@ -33,9 +33,8 @@ except ImportError:
     sys.exit(1)
 
 # Get environment variables
-HL_MASTER_ADDRESS = os.getenv('HL_MASTER_ADDRESS')  # Master account (where funds are)
-HL_API_ADDRESS = os.getenv('HL_API_ADDRESS')  # API wallet (agent)
-HL_API_PRIVATE_KEY = os.getenv('HL_API_PRIVATE_KEY')  # API wallet private key
+HL_MASTER_ADDRESS = os.getenv('HL_MASTER_ADDRESS')  # Master/builder account (where funds are, also signs)
+HL_API_PRIVATE_KEY = os.getenv('HL_API_PRIVATE_KEY')  # Private key for signing
 HL_DEX_NAME = os.getenv('HL_DEX_NAME', 'XAU')
 HL_COIN_SYMBOL = os.getenv('HL_COIN_SYMBOL', 'XAU-TEST')
 INITIAL_ORACLE_PRICE = os.getenv('INITIAL_ORACLE_PRICE', '1924.5')

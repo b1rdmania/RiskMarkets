@@ -21,9 +21,8 @@ export interface ServiceConfig {
   pythApiUrl: string;
   pythCluster?: string;
   hlUrl: string;
-  hlMasterAddress: string;  // Master account (where funds are deposited)
-  hlApiAddress: string;  // API wallet (agent - used for signing)
-  hlApiPrivateKey: string;  // API wallet private key (for signing)
+  hlMasterAddress: string;  // Master/builder account (where funds are deposited and signing happens)
+  hlApiPrivateKey: string;  // Private key for signing L1 actions
   hlDexName?: string;  // DEX name for HIP-3 markets (2-4 chars, e.g., "XAU")
   hlCoinSymbol?: string;  // Coin symbol (e.g., "XAU-TEST")
   hlAssetId?: number;  // Numeric asset ID from meta.universe (for trading)
@@ -50,9 +49,8 @@ export const config: ServiceConfig = {
   pythApiUrl: required('PYTH_API_URL', 'https://hermes-beta.pyth.network/api'),
   pythCluster: process.env.PYTH_CLUSTER,
   hlUrl: required('HL_TESTNET_URL'),
-  hlMasterAddress: required('HL_MASTER_ADDRESS'),  // Master account
-  hlApiAddress: required('HL_API_ADDRESS'),  // API wallet (agent)
-  hlApiPrivateKey: required('HL_API_PRIVATE_KEY'),  // API wallet private key
+  hlMasterAddress: required('HL_MASTER_ADDRESS'),
+  hlApiPrivateKey: required('HL_API_PRIVATE_KEY'),
   hlDexName: process.env.HL_DEX_NAME,  // DEX name (2-4 chars, e.g., "XAU")
   hlCoinSymbol: process.env.HL_COIN_SYMBOL,  // Coin symbol (e.g., "XAU-TEST")
   hlAssetId: process.env.HL_ASSET_ID ? Number(process.env.HL_ASSET_ID) : undefined,  // Asset ID for trading

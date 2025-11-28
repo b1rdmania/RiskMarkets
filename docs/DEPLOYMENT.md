@@ -25,8 +25,7 @@ PYTH_FEED_ID_XAU_USD=<feed-id>
 # Hyperliquid
 HL_API_URL=https://api.hyperliquid-testnet.xyz
 HL_MASTER_ADDRESS=0x47515db2eab01758c740ab220352a34b8d5a3826
-HL_API_PRIVATE_KEY=<builder-wallet-private-key>
-HL_API_ADDRESS=0x47515db2eab01758c740ab220352a34b8d5a3826
+HL_API_PRIVATE_KEY=<builder-wallet-private-key>  # same wallet as master; no separate API address
 
 # HIP-3 Market
 HL_DEX_NAME=XAU
