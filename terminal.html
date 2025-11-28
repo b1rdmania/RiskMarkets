@@ -369,61 +369,7 @@
                         <th>ACTIONS</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr onclick="openDrawer('GDR')">
-                        <td>
-                            <a href="gdr.html" style="color: inherit; text-decoration: none; display: block;" onclick="event.stopPropagation()">
-                                <div class="index-name">GDR</div>
-                                <div class="index-subtitle">DEFENCE ROTATION INDEX</div>
-                            </a>
-                        </td>
-                        <td class="price">$102.44</td>
-                        <td class="status-up">+2.18%</td>
-                        <td><div class="sparkline"></div></td>
-                        <td class="text-mono">$1.67M</td>
-                        <td>
-                            <div class="action-buttons">
-                                <a href="gdr.html" style="text-decoration: none;" onclick="event.stopPropagation()"><button class="btn-action btn-long">LONG</button></a>
-                                <a href="gdr.html" style="text-decoration: none;" onclick="event.stopPropagation()"><button class="btn-action btn-short">SHORT</button></a>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr onclick="openDrawer('ESV')">
-                        <td>
-                            <a href="esv.html" style="color: inherit; text-decoration: none; display: block;" onclick="event.stopPropagation()">
-                                <div class="index-name">ESV</div>
-                                <div class="index-subtitle">ENERGY SHOCK VOLATILITY</div>
-                            </a>
-                        </td>
-                        <td class="price">$88.12</td>
-                        <td class="status-up">+1.04%</td>
-                        <td><div class="sparkline"></div></td>
-                        <td class="text-mono">$2.41M</td>
-                        <td>
-                            <div class="action-buttons">
-                                <a href="esv.html" style="text-decoration: none;" onclick="event.stopPropagation()"><button class="btn-action btn-long">LONG</button></a>
-                                <a href="esv.html" style="text-decoration: none;" onclick="event.stopPropagation()"><button class="btn-action btn-short">SHORT</button></a>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr onclick="openDrawer('SHR')">
-                        <td>
-                            <a href="shr.html" style="color: inherit; text-decoration: none; display: block;" onclick="event.stopPropagation()">
-                                <div class="index-name">SHR</div>
-                                <div class="index-subtitle">SAFE HAVEN ROTATION</div>
-                            </a>
-                        </td>
-                        <td class="price">$74.55</td>
-                        <td class="status-down">-0.33%</td>
-                        <td><div class="sparkline"></div></td>
-                        <td class="text-mono">$1.12M</td>
-                        <td>
-                            <div class="action-buttons">
-                                <a href="shr.html" style="text-decoration: none;" onclick="event.stopPropagation()"><button class="btn-action btn-long">LONG</button></a>
-                                <a href="shr.html" style="text-decoration: none;" onclick="event.stopPropagation()"><button class="btn-action btn-short">SHORT</button></a>
-                            </div>
-                        </td>
-                    </tr>
+                <tbody id="marketsBody">
                 </tbody>
             </table>
         </div>
@@ -449,8 +395,8 @@
     <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
     <div class="drawer" id="tradingDrawer">
         <div style="margin-bottom: 24px;">
-            <h2 style="color: var(--neon-green); margin-bottom: 8px;" id="drawerIndex">ECV</h2>
-            <p class="text-small" id="drawerSubtitle">Energy Corridor Volatility</p>
+            <h2 style="color: var(--neon-green); margin-bottom: 8px;" id="drawerIndex">GDR</h2>
+            <p class="text-small" id="drawerSubtitle">Defence Rotation Index</p>
             <p style="color: var(--amber); font-size: 12px; margin-top: 8px;" id="stressLevel">Stress Level: MEDIUM</p>
         </div>
 
@@ -486,20 +432,19 @@
             </div>
 
             <div style="display: flex; gap: 8px;">
-                <button class="btn btn-long" style="flex: 1;">LONG ECV</button>
-                <button class="btn btn-short" style="flex: 1;">SHORT ECV</button>
+                <button id="longButton" class="btn btn-long" style="flex: 1;">LONG GDR</button>
+                <button id="shortButton" class="btn btn-short" style="flex: 1;">SHORT GDR</button>
             </div>
         </div>
 
         <!-- Oracle Breakdown -->
         <div class="panel" style="margin-bottom: 24px;">
             <h3 style="font-size: 14px; margin-bottom: 16px; color: var(--text-primary);">INDEX COMPOSITION</h3>
-            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; line-height: 1.8; color: var(--text-secondary);">
-                <div>35% Oil (Pyth)</div>
-                <div>20% NatGas (Pyth)</div>
-                <div>20% Freight Proxy</div>
-                <div>15% Gold (Pyth)</div>
-                <div>10% USD/CHF (Pyth)</div>
+            <div id="compositionLines" style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; line-height: 1.8; color: var(--text-secondary);">
+                <div>30% LMT</div>
+                <div>25% RTX</div>
+                <div>25% NOC</div>
+                <div>20% PLTR</div>
             </div>
             <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(2, 255, 129, 0.2); font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-secondary);">
                 <div>Update Cycle: 2.5s</div>
@@ -516,47 +461,87 @@
         </div>
     </div>
 
+    <script src="markets.js"></script>
     <script>
-        const indexData = {
-            ECV: {
-                name: 'ECV',
-                subtitle: 'Energy Corridor Volatility',
-                stress: 'MEDIUM'
-            },
-            APMS: {
-                name: 'APMS',
-                subtitle: 'Asia-Pacific Macro Stress',
-                stress: 'HIGH'
-            },
-            GRMI: {
-                name: 'GRMI',
-                subtitle: 'Global Risk Momentum Index',
-                stress: 'LOW'
-            },
-            EASCS: {
-                name: 'EASCS',
-                subtitle: 'East Asia Supply Chain Stress',
-                stress: 'MEDIUM'
-            },
-            EUVI: {
-                name: 'EUVI',
-                subtitle: 'European Volatility Index',
-                stress: 'LOW'
-            }
-        };
+        const indexList = (window.WAR_MARKETS || []);
+        const indexData = Object.fromEntries(indexList.map(m => [m.code, m]));
+
+        function renderMarkets() {
+            const tbody = document.getElementById('marketsBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+
+            indexList.forEach((mkt) => {
+                const tr = document.createElement('tr');
+                tr.onclick = () => openDrawer(mkt.code);
+
+                const linkHref = `${mkt.slug}.html`;
+
+                const tdIndex = document.createElement('td');
+                tdIndex.innerHTML = `
+                    <a href="${linkHref}" style="color: inherit; text-decoration: none; display: block;" onclick="event.stopPropagation()">
+                        <div class="index-name">${mkt.displayName}</div>
+                        <div class="index-subtitle">${mkt.subtitle}</div>
+                    </a>
+                `;
+
+                const tdPrice = document.createElement('td');
+                tdPrice.className = 'price';
+                tdPrice.textContent = mkt.price;
+
+                const tdChange = document.createElement('td');
+                tdChange.className = mkt.changeDirection === 'down' ? 'status-down' : 'status-up';
+                tdChange.textContent = mkt.change;
+
+                const tdSpark = document.createElement('td');
+                tdSpark.innerHTML = '<div class="sparkline"></div>';
+
+                const tdVolume = document.createElement('td');
+                tdVolume.className = 'text-mono';
+                tdVolume.textContent = mkt.volume;
+
+                const tdActions = document.createElement('td');
+                tdActions.innerHTML = `
+                    <div class="action-buttons">
+                        <a href="${linkHref}" style="text-decoration: none;" onclick="event.stopPropagation()"><button class="btn-action btn-long">LONG</button></a>
+                        <a href="${linkHref}" style="text-decoration: none;" onclick="event.stopPropagation()"><button class="btn-action btn-short">SHORT</button></a>
+                    </div>
+                `;
+
+                tr.appendChild(tdIndex);
+                tr.appendChild(tdPrice);
+                tr.appendChild(tdChange);
+                tr.appendChild(tdSpark);
+                tr.appendChild(tdVolume);
+                tr.appendChild(tdActions);
+
+                tbody.appendChild(tr);
+            });
+        }
 
         function openDrawer(index) {
             const drawer = document.getElementById('tradingDrawer');
             const overlay = document.getElementById('drawerOverlay');
             const data = indexData[index];
-            
-            document.getElementById('drawerIndex').textContent = data.name;
-            document.getElementById('drawerSubtitle').textContent = data.subtitle;
+
+            if (!data) return;
+
+            document.getElementById('drawerIndex').textContent = data.code;
+            document.getElementById('drawerSubtitle').textContent = data.longName;
             document.getElementById('stressLevel').textContent = `Stress Level: ${data.stress}`;
-            
+
+            const compositionEl = document.getElementById('compositionLines');
+            compositionEl.innerHTML = data.composition.map(line => `<div>${line}</div>`).join('');
+
+            document.getElementById('longButton').textContent = `LONG ${data.code}`;
+            document.getElementById('shortButton').textContent = `SHORT ${data.code}`;
+
             drawer.classList.add('open');
             overlay.classList.add('active');
         }
+
+        document.addEventListener('DOMContentLoaded', renderMarkets);
 
         function closeDrawer() {
             const drawer = document.getElementById('tradingDrawer');

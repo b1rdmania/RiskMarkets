@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WAR.MARKET — GRMI</title>
+    <title>WAR.MARKET — SHR</title>
     <link rel="stylesheet" href="styles/main.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -331,7 +331,7 @@
 <body>
     <div class="map-background"></div>
     <div class="scan-line"></div>
-    <div class="scanning-label" style="top: 80px; right: 50px;">MONITORING GLOBAL RISK MOMENTUM</div>
+    <div class="scanning-label" style="top: 80px; right: 50px;">MONITORING SAFE HAVEN FLOWS</div>
 
     <!-- Top Bar -->
     <div class="top-bar">
@@ -351,8 +351,8 @@
     <div class="index-container">
         <!-- Top Block -->
         <div class="index-header">
-            <h1>GRMI — Global Risk Momentum Index</h1>
-            <div class="subtitle">A composite index tracking global risk and safe-haven momentum.</div>
+            <h1>SHR — Safe Haven Rotation</h1>
+            <div class="subtitle">A synthetic risk-off index tracking safe-haven flows.</div>
             <div class="neon-line"></div>
         </div>
 
@@ -363,15 +363,15 @@
                 <h3>LIVE METRICS</h3>
                 <div class="metric-row">
                     <span class="metric-label">PRICE:</span>
-                    <span class="metric-value">$72.15</span>
+                    <span class="metric-value">$74.55</span>
                 </div>
                 <div class="metric-row">
                     <span class="metric-label">24H:</span>
-                    <span class="metric-value status-down">-0.23%</span>
+                    <span class="metric-value status-down">-0.33%</span>
                 </div>
                 <div class="metric-row">
                     <span class="metric-label">VOLUME:</span>
-                    <span class="metric-value">$2.14M</span>
+                    <span class="metric-value">$1.12M</span>
                 </div>
                 <div class="metric-row">
                     <span class="metric-label">SPARKLINE:</span>
@@ -401,8 +401,8 @@
                     <div>Funding: <span class="status-up">+0.03%</span></div>
                 </div>
                 <div style="display: flex; gap: 8px;">
-                    <button class="btn btn-long" style="flex: 1;">LONG GRMI</button>
-                    <button class="btn btn-short" style="flex: 1;">SHORT GRMI</button>
+                    <button class="btn btn-long" style="flex: 1;">LONG SHR</button>
+                    <button class="btn btn-short" style="flex: 1;">SHORT SHR</button>
                 </div>
             </div>
         </div>
@@ -414,31 +414,19 @@
                 <div class="bar-item">
                     <div class="bar-label">Gold</div>
                     <div class="bar-container">
+                        <div class="bar-fill" style="width: 40%;">40%</div>
+                    </div>
+                </div>
+                <div class="bar-item">
+                    <div class="bar-label">CHF (USD/CHF inverse)</div>
+                    <div class="bar-container">
                         <div class="bar-fill" style="width: 30%;">30%</div>
                     </div>
                 </div>
                 <div class="bar-item">
-                    <div class="bar-label">USD Index</div>
+                    <div class="bar-label">JPY (USD/JPY inverse)</div>
                     <div class="bar-container">
-                        <div class="bar-fill" style="width: 25%;">25%</div>
-                    </div>
-                </div>
-                <div class="bar-item">
-                    <div class="bar-label">Global Vol Basket</div>
-                    <div class="bar-container">
-                        <div class="bar-fill" style="width: 20%;">20%</div>
-                    </div>
-                </div>
-                <div class="bar-item">
-                    <div class="bar-label">CHF</div>
-                    <div class="bar-container">
-                        <div class="bar-fill" style="width: 15%;">15%</div>
-                    </div>
-                </div>
-                <div class="bar-item">
-                    <div class="bar-label">Commodities Proxy</div>
-                    <div class="bar-container">
-                        <div class="bar-fill" style="width: 10%;">10%</div>
+                        <div class="bar-fill" style="width: 30%;">30%</div>
                     </div>
                 </div>
             </div>
@@ -447,27 +435,25 @@
         <!-- Overview -->
         <div class="content-section">
             <h3>OVERVIEW</h3>
-            <p>GRMI tracks global volatility flow and safe-haven demand. It blends metals, FX, and broad volatility into one measure.</p>
+            <p>SHR captures rotation into classic safe-haven assets. It reflects broad risk-off behaviour across gold, CHF, and JPY. The index aggregates neutral market feeds into one clean volatility surface. It is not an FX forecast — only a structured risk-off measure.</p>
         </div>
 
         <!-- Why This Index Matters -->
         <div class="content-section">
             <h3>WHY THIS INDEX MATTERS</h3>
-            <p>Global markets move together when fear rises. GRMI offers a clean way to trade that shift.</p>
+            <p>When global fear rises, safe-haven assets move first. SHR distils these movements into a clear, readable stress signal. It gives traders a simple way to express risk-off sentiment.</p>
         </div>
 
         <!-- How It Works -->
         <div class="content-section">
-            <h3>HOW IT WORKS</h3>
-            <p>Deployed as a HIP-3 perpetual on Hyperliquid</p>
-            <p>Built from neutral market feeds</p>
-            <p>WAR.MARKET provides the thematic interface</p>
+            <h3>TRADING MODEL</h3>
+            <p>SHR is a HIP-3 perpetual market on Hyperliquid. Users long or short using Hyperliquid’s front end. WAR.MARKET provides the thematic presentation while execution remains Hyperliquid-native.</p>
         </div>
 
         <!-- Powered By -->
         <div class="content-section">
             <h3>POWERED BY RISKHYPE</h3>
-            <p>This index is backed by staked HYPE via the riskHYPE vault.</p>
+            <p>SHR is powered by staked HYPE via the riskHYPE vault. Stakers earn points, native yield, and future $RISK boosts.</p>
         </div>
 
         <!-- Back Link -->
