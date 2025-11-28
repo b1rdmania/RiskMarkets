@@ -130,8 +130,39 @@ payload = {
 
 Same pattern - agent signs, `vaultAddress=MASTER_ADDRESS`.
 
+## HIP-3 Market Types
+
+### Solo Market (Recommended for v0)
+
+Start with a **solo market** (single asset) rather than composite:
+- Simpler: matches v0 identity function (`index = pyth_price`)
+- Easier to debug: one feed, one price
+- Faster to test: less complexity
+
+**Suggested Test Markets:**
+- **GOLD/USD** (XAU/USD) - Stable, well-understood
+- **Swiss Franc (CHF/USD)** - FX pair, good liquidity
+- **BTC/USD** - Most liquid, easiest to test
+
+### Composite Market (Later)
+
+Once solo works, deploy composite markets:
+- **50% GOLD + 50% CHF** - Requires fetching two Pyth feeds and weighted average
+- Needs index calculation logic (beyond v0 identity function)
+
+## HIP-3 Prerequisites
+
+1. **1M staked HYPE** (may be waived on testnet - verify)
+2. **API Wallet** authorized and associated with master account
+3. **Market Definition**:
+   - Asset name (e.g., `XAU-TEST`)
+   - Oracle definition (points to your oracle service)
+   - Contract specifications (leverage, margin, etc.)
+   - Size decimals (recommended: $1-10 per unit at initial price)
+
 ## References
 
 - [Hyperliquid HIP-3 Docs](https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/hip-3-deployer-actions)
 - [Hyperliquid Signing Docs](https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/signing)
+- [Hyperliquid Builder Tools](https://hyperliquid.gitbook.io/hyperliquid-docs/builder-tools/hypercore-tools)
 
