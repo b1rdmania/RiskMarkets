@@ -70,7 +70,7 @@ def set_oracle(price: str):
     exchange = Exchange(api_wallet, constants.TESTNET_API_URL, account_address=HL_MASTER_ADDRESS)
     
     # Verify API wallet address
-    EXPECTED_API_ADDRESS = "0x86C672b3553576Fa436539F21BD660F44Ce10a86"
+    EXPECTED_API_ADDRESS = "0x47515db2eab01758c740ab220352a34b8d5a3826"
     if api_wallet.address.lower() != EXPECTED_API_ADDRESS.lower():
         print(f"❌ Error: API wallet address mismatch")
         print(f"   Expected: {EXPECTED_API_ADDRESS}")

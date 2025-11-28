@@ -21,7 +21,7 @@ if (!pk) {
 }
 
 const wallet = new Wallet(pk);
-const expectedAddress = '0x86C672b3553576Fa436539F21BD660F44Ce10a86';
+const expectedAddress = '0x47515db2eab01758c740ab220352a34b8d5a3826';
 
 console.log('\n🔍 Signer Verification\n');
 console.log(`Signer from HL_API_PRIVATE_KEY: ${wallet.address}`);
