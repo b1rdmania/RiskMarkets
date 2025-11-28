@@ -25,10 +25,10 @@ PYTH_FEED_ID_XAU_USD=<feed-id>
 # Hyperliquid
 HL_API_URL=https://api.hyperliquid-testnet.xyz
 HL_MASTER_ADDRESS=0x47515db2eab01758c740ab220352a34b8d5a3826
-HL_API_PRIVATE_KEY=<builder-wallet-private-key>  # same wallet as master; no separate API address
+HL_MASTER_PRIVATE_KEY=<builder-wallet-private-key>  # master wallet private key (single-wallet model)
 
 # HIP-3 Market
-HL_DEX_NAME=XAU
+HL_DEX_NAME=xau
 HL_COIN_SYMBOL=XAU-TEST
 HL_PUBLISH_ENABLED=false  # Set to true after market is deployed
 ```
@@ -49,7 +49,7 @@ NETWORK=testnet python3 scripts/deploy-correct.py
 ```
 
 This will:
-- Sign with agent wallet (`HL_API_PRIVATE_KEY`)
+- Sign with the master wallet (`HL_MASTER_PRIVATE_KEY`)
 - Set `vaultAddress=MASTER_ADDRESS` in signature hash
 - Include `vaultAddress=MASTER_ADDRESS` in payload
 - Deploy `registerAsset` action to Hyperliquid

@@ -28,13 +28,13 @@ except ImportError:
 
 # Get environment variables
 HL_MASTER_ADDRESS = os.getenv('HL_MASTER_ADDRESS')
-HL_API_PRIVATE_KEY = os.getenv('HL_API_PRIVATE_KEY')
+HL_MASTER_PRIVATE_KEY = os.getenv('HL_MASTER_PRIVATE_KEY')
 HL_DEX_NAME = os.getenv('HL_DEX_NAME', 'XAU')
 HL_COIN_SYMBOL = os.getenv('HL_COIN_SYMBOL', 'XAU-TEST')
 INITIAL_ORACLE_PRICE = os.getenv('INITIAL_ORACLE_PRICE', '1924.5')
 
-if not HL_API_PRIVATE_KEY:
-    print("❌ Error: Missing HL_API_PRIVATE_KEY")
+if not HL_MASTER_PRIVATE_KEY:
+    print("❌ Error: Missing HL_MASTER_PRIVATE_KEY")
     sys.exit(1)
 
 if not HL_MASTER_ADDRESS:
@@ -51,10 +51,10 @@ def deploy_with_sdk():
     print(f"   Master Account: {HL_MASTER_ADDRESS}")
     print()
     
-    # Initialize API wallet (agent) and Exchange
-    # Agent signs, master is the account we act on
-    agent_wallet = eth_account.Account.from_key(HL_API_PRIVATE_KEY)
-    print(f"✅ API wallet (agent - signer): {agent_wallet.address}")
+    # Initialize master wallet and Exchange
+    # Master signs and is the account we act on
+    agent_wallet = eth_account.Account.from_key(HL_MASTER_PRIVATE_KEY)
+    print(f"✅ Master wallet (signer): {agent_wallet.address}")
     print(f"✅ Master account (target): {HL_MASTER_ADDRESS}\n")
     
     # Initialize Exchange: agent signs, master is the account

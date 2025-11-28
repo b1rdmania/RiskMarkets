@@ -32,12 +32,12 @@ except ImportError:
 
 # Get environment variables
 HL_MASTER_ADDRESS = os.getenv('HL_MASTER_ADDRESS')  # Master account
-HL_API_PRIVATE_KEY = os.getenv('HL_API_PRIVATE_KEY')  # API wallet private key
+HL_MASTER_PRIVATE_KEY = os.getenv('HL_MASTER_PRIVATE_KEY')  # Master wallet private key
 HL_DEX_NAME = os.getenv('HL_DEX_NAME', 'XAU')
 HL_COIN_SYMBOL = os.getenv('HL_COIN_SYMBOL', 'XAU-TEST')
 
-if not HL_API_PRIVATE_KEY:
-    print("❌ Error: Missing HL_API_PRIVATE_KEY")
+if not HL_MASTER_PRIVATE_KEY:
+    print("❌ Error: Missing HL_MASTER_PRIVATE_KEY")
     sys.exit(1)
 
 if not HL_MASTER_ADDRESS:
@@ -65,9 +65,9 @@ def set_oracle(price: str):
     """Set oracle price using Python SDK (canonical signing)."""
     
     # Initialize wallet and exchange
-    # Exchange uses agent wallet for signing, but master address is the account
-    api_wallet = eth_account.Account.from_key(HL_API_PRIVATE_KEY)
-    exchange = Exchange(api_wallet, constants.TESTNET_API_URL, account_address=HL_MASTER_ADDRESS)
+    # Single-wallet model: builder/master wallet both signs and owns the account
+    api_wallet = eth_account.Account.from_key(HL_MASTER_PRIVATE_KEY)
+    exchange = Exchange(api_wallet, constants.TESTNET_API_URL)
     
     # Verify API wallet address
     EXPECTED_API_ADDRESS = "0x47515db2eab01758c740ab220352a34b8d5a3826"
@@ -80,8 +80,7 @@ def set_oracle(price: str):
     print(f"✅ API wallet (agent): {api_wallet.address}")
     print(f"✅ Master account: {HL_MASTER_ADDRESS}")
     
-    # Use SDK's perp_deploy_set_oracle but override vaultAddress
-    # SDK passes None as active_pool, but we need MASTER_ADDRESS
+    # Use SDK's sign_l1_action for canonical signing
     from hyperliquid.utils.signing import sign_l1_action
     from hyperliquid.exchange import get_timestamp_ms
     
@@ -100,23 +99,22 @@ def set_oracle(price: str):
         },
     }
     
-    # Sign with vaultAddress=MASTER_ADDRESS
+    # Sign WITHOUT a vaultAddress override – let HL infer from signer
     timestamp = get_timestamp_ms()
     signature = sign_l1_action(
         api_wallet,
         action,
-        HL_MASTER_ADDRESS,  # vaultAddress (the account the action is for)
+        None,                              # active_pool / vaultAddress override
         timestamp,
         exchange.expires_after,
         exchange.base_url == constants.MAINNET_API_URL,
     )
     
-    # Post with vaultAddress in payload
+    # Post WITHOUT an explicit vaultAddress – HL will infer from signer
     payload = {
         "action": action,
         "nonce": timestamp,
         "signature": signature,
-        "vaultAddress": HL_MASTER_ADDRESS,  # CRITICAL: master account
         "expiresAfter": exchange.expires_after,
     }
     

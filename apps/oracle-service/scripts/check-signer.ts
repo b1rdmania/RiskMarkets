@@ -14,9 +14,9 @@ import { Wallet } from 'ethers';
 const envFile = path.resolve(__dirname, '../.env.testnet');
 dotenv.config({ path: envFile });
 
-const pk = process.env.HL_API_PRIVATE_KEY;
+const pk = process.env.HL_MASTER_PRIVATE_KEY;
 if (!pk) {
-  console.error('❌ Error: HL_API_PRIVATE_KEY not set');
+  console.error('❌ Error: HL_MASTER_PRIVATE_KEY not set');
   process.exit(1);
 }
 
@@ -24,7 +24,7 @@ const wallet = new Wallet(pk);
 const expectedAddress = '0x47515db2eab01758c740ab220352a34b8d5a3826';
 
 console.log('\n🔍 Signer Verification\n');
-console.log(`Signer from HL_API_PRIVATE_KEY: ${wallet.address}`);
+console.log(`Signer from HL_MASTER_PRIVATE_KEY: ${wallet.address}`);
 console.log(`Expected address:              ${expectedAddress}\n`);
 
 if (wallet.address.toLowerCase() === expectedAddress.toLowerCase()) {

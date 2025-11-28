@@ -34,22 +34,22 @@ except ImportError:
 
 # Get environment variables
 HL_MASTER_ADDRESS = os.getenv('HL_MASTER_ADDRESS')  # Master/builder account (where funds are, also signs)
-HL_API_PRIVATE_KEY = os.getenv('HL_API_PRIVATE_KEY')  # Private key for signing
+HL_MASTER_PRIVATE_KEY = os.getenv('HL_MASTER_PRIVATE_KEY')  # Master private key for signing
 HL_DEX_NAME = os.getenv('HL_DEX_NAME', 'XAU')
 HL_COIN_SYMBOL = os.getenv('HL_COIN_SYMBOL', 'XAU-TEST')
 INITIAL_ORACLE_PRICE = os.getenv('INITIAL_ORACLE_PRICE', '1924.5')
 
-if not HL_API_PRIVATE_KEY:
-    print("❌ Error: Missing HL_API_PRIVATE_KEY")
+if not HL_MASTER_PRIVATE_KEY:
+    print("❌ Error: Missing HL_MASTER_PRIVATE_KEY")
     sys.exit(1)
 
 if not HL_MASTER_ADDRESS:
     print("❌ Error: Missing HL_MASTER_ADDRESS")
     sys.exit(1)
 
-# Verify API wallet address from private key
-acct = eth_account.Account.from_key(HL_API_PRIVATE_KEY)
-print(f"✅ API wallet (agent) address: {acct.address}")
+# Verify master wallet address from private key
+acct = eth_account.Account.from_key(HL_MASTER_PRIVATE_KEY)
+print(f"✅ Master wallet address: {acct.address}")
 print(f"✅ Master account address: {HL_MASTER_ADDRESS}")
 
 EXPECTED_API_ADDRESS = "0x47515db2eab01758c740ab220352a34b8d5a3826"

@@ -32,9 +32,9 @@ except ImportError as e:
     print("Install with: pip3 install hyperliquid-python-sdk python-dotenv eth-account")
     sys.exit(1)
 
-# Get environment variables - EXACTLY as specified
-MASTER_ADDRESS = os.environ["HL_MASTER_ADDRESS"]  # Master account (user)
-AGENT_PK = os.environ["HL_API_PRIVATE_KEY"]  # Agent private key
+# Get environment variables - single builder wallet model
+MASTER_ADDRESS = os.environ["HL_MASTER_ADDRESS"]  # Builder/master account (user + signer)
+AGENT_PK = os.environ["HL_MASTER_PRIVATE_KEY"]      # Master/builder private key
 DEX = os.getenv("HL_DEX_NAME", "XAU")
 COIN = os.getenv("HL_COIN_SYMBOL", "XAU-TEST")
 INITIAL_ORACLE_PRICE = os.getenv("INITIAL_ORACLE_PRICE", "1924.5")
@@ -44,7 +44,7 @@ if not MASTER_ADDRESS:
     sys.exit(1)
 
 if not AGENT_PK:
-    print("❌ Error: Missing HL_API_PRIVATE_KEY")
+    print("❌ Error: Missing HL_MASTER_PRIVATE_KEY")
     sys.exit(1)
 
 # Verify agent wallet
@@ -53,11 +53,11 @@ print(f"✅ Agent wallet (signer): {agent_wallet.address}")
 print(f"✅ Master account (target): {MASTER_ADDRESS}")
 print()
 
-# Initialize Exchange EXACTLY as specified
+# Initialize Exchange: wallet signs, MASTER_ADDRESS is the account we act on
 exchange = Exchange(
-    wallet=agent_wallet,                   # signer = agent
+    wallet=agent_wallet,
     base_url=constants.TESTNET_API_URL,
-    account_address=MASTER_ADDRESS         # target account = master
+    account_address=MASTER_ADDRESS,
 )
 
 print(f"✅ Exchange initialized:")
@@ -71,14 +71,14 @@ print()
 if False:  # SDK doesn't have this method
     pass
 else:
-    print("⚠️  SDK doesn't have perp_deploy_register_asset2")
-    print("📝 Manually constructing registerAsset2 action...")
+    print("⚠️  Using legacy perp_deploy_register_asset (v0)")
+    print("📝 Manually constructing registerAsset action...")
     
     # Use registerAsset (SDK method) - registerAsset2 doesn't exist in SDK
     action = {
         "type": "perpDeploy",
         "registerAsset": {
-            "maxGas": None,
+            # omit maxGas entirely for testnet compatibility
             "assetRequest": {
                 "coin": COIN,
                 "szDecimals": 2,
@@ -91,28 +91,28 @@ else:
                 "fullName": f"{DEX} Test DEX",
                 "collateralToken": 0,
                 "oracleUpdater": MASTER_ADDRESS.lower(),
-            }
-        }
+            },
+        },
     }
     
-    # Sign using Exchange's signing - CRITICAL: pass MASTER_ADDRESS as active_pool (vaultAddress)
+    # Sign using SDK's canonical sign_l1_action
+    # IMPORTANT: pass MASTER_ADDRESS as active_pool / vaultAddress (as when signer recovery worked)
     timestamp = get_timestamp_ms()
     signature = sign_l1_action(
-        exchange.wallet,  # agent wallet (signer)
+        exchange.wallet,
         action,
-        MASTER_ADDRESS,  # active_pool = vaultAddress (the account the action is for)
+        MASTER_ADDRESS,  # active_pool / vaultAddress (account we act on)
         timestamp,
         exchange.expires_after,
-        exchange.base_url == constants.MAINNET_API_URL  # is_mainnet
+        exchange.base_url == constants.MAINNET_API_URL,  # is_mainnet
     )
     
-    # Post using Exchange's _post_action - but override vaultAddress to use MASTER_ADDRESS
-    # The SDK's _post_action uses exchange.vault_address, but we need MASTER_ADDRESS
+    # Post to /exchange WITH explicit vaultAddress = MASTER_ADDRESS
     payload = {
         "action": action,
         "nonce": timestamp,
         "signature": signature,
-        "vaultAddress": MASTER_ADDRESS,  # CRITICAL: master account, not null
+        "vaultAddress": MASTER_ADDRESS,
         "expiresAfter": exchange.expires_after,
     }
     result = exchange.post("/exchange", payload)
