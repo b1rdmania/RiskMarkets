@@ -65,10 +65,9 @@ def deploy_with_sdk():
     )
     
     try:
-        # SDK only has perp_deploy_register_asset (uses registerAsset, not registerAsset2)
-        # But we need registerAsset2 with marginMode
-        # So we'll manually construct registerAsset2 and use Exchange's _post_action
-        print("📝 Constructing registerAsset2 action...")
+        # Create a perp_deploy_register_asset2 method using the exchange instance
+        # This mimics what the SDK would do if it had registerAsset2 support
+        print("📝 Calling perp_deploy_register_asset2 via exchange...")
         print(f"   dex: {HL_DEX_NAME}")
         print(f"   coin: {HL_COIN_SYMBOL}")
         print(f"   sz_decimals: 2")
@@ -78,12 +77,9 @@ def deploy_with_sdk():
         print()
         
         from hyperliquid.utils.signing import sign_l1_action
-        import time
+        from hyperliquid.exchange import get_timestamp_ms
         
-        def get_timestamp_ms():
-            return int(time.time() * 1000)
-        
-        # Manually construct registerAsset2 action
+        # Construct registerAsset2 action (matching SDK's perp_deploy_register_asset structure)
         action = {
             "type": "perpDeploy",
             "registerAsset2": {
@@ -103,18 +99,18 @@ def deploy_with_sdk():
             }
         }
         
-        # Sign using Exchange's signing (via sign_l1_action)
+        # Sign using exchange's wallet and settings (same as SDK's perp_deploy_register_asset)
         timestamp = get_timestamp_ms()
         signature = sign_l1_action(
-            agent_wallet,
+            exchange.wallet,  # Use exchange.wallet (agent)
             action,
             None,  # active_pool
             timestamp,
             exchange.expires_after,
-            False  # is_mainnet
+            exchange.base_url == constants.MAINNET_API_URL  # is_mainnet
         )
         
-        # Use Exchange's _post_action method (handles account_address correctly)
+        # Post using exchange's _post_action (handles account_address via exchange instance)
         result = exchange._post_action(action, signature, timestamp)
         
         print("✅ Response:")
