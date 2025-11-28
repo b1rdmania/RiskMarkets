@@ -80,14 +80,48 @@ def set_oracle(price: str):
     print(f"✅ API wallet (agent): {api_wallet.address}")
     print(f"✅ Master account: {HL_MASTER_ADDRESS}")
     
-    # Use SDK's perp_deploy_set_oracle (uses canonical signing)
+    # Use SDK's perp_deploy_set_oracle but override vaultAddress
+    # SDK passes None as active_pool, but we need MASTER_ADDRESS
+    from hyperliquid.utils.signing import sign_l1_action
+    from hyperliquid.exchange import get_timestamp_ms
+    
+    # Build setOracle action
+    oracle_pxs_wire = sorted(list({HL_COIN_SYMBOL: price_str}.items()))
+    mark_pxs_wire = []
+    external_perp_pxs_wire = sorted(list({HL_COIN_SYMBOL: price_str}.items()))
+    
+    action = {
+        "type": "perpDeploy",
+        "setOracle": {
+            "dex": HL_DEX_NAME,
+            "oraclePxs": oracle_pxs_wire,
+            "markPxs": mark_pxs_wire,
+            "externalPerpPxs": external_perp_pxs_wire,
+        },
+    }
+    
+    # Sign with vaultAddress=MASTER_ADDRESS
+    timestamp = get_timestamp_ms()
+    signature = sign_l1_action(
+        api_wallet,
+        action,
+        HL_MASTER_ADDRESS,  # vaultAddress (the account the action is for)
+        timestamp,
+        exchange.expires_after,
+        exchange.base_url == constants.MAINNET_API_URL,
+    )
+    
+    # Post with vaultAddress in payload
+    payload = {
+        "action": action,
+        "nonce": timestamp,
+        "signature": signature,
+        "vaultAddress": HL_MASTER_ADDRESS,  # CRITICAL: master account
+        "expiresAfter": exchange.expires_after,
+    }
+    
     try:
-        result = exchange.perp_deploy_set_oracle(
-            dex=HL_DEX_NAME,
-            oracle_pxs={HL_COIN_SYMBOL: price_str},
-            all_mark_pxs=[],
-            external_perp_pxs={HL_COIN_SYMBOL: price_str},
-        )
+        result = exchange.post("/exchange", payload)
         
         # Output JSON for Node.js to parse
         print(json.dumps({

@@ -66,38 +66,25 @@ print(f"   account_address: {exchange.account_address}")
 print(f"   base_url: {exchange.base_url}")
 print()
 
-# Check if SDK has perp_deploy_register_asset2
-if hasattr(exchange, 'perp_deploy_register_asset2'):
-    print("📝 SDK has perp_deploy_register_asset2 - using it...")
-    result = exchange.perp_deploy_register_asset2(
-        dex=DEX,
-        asset_request={
-            "coin": COIN,
-            "szDecimals": 2,
-            "oraclePx": INITIAL_ORACLE_PRICE,
-            "marginTableId": 1,
-            "marginMode": "strictIsolated",
-        },
-        schema={
-            "fullName": f"{DEX} Test DEX",
-            "collateralToken": 0,
-            "oracleUpdater": MASTER_ADDRESS.lower(),
-        },
-    )
+# SDK doesn't have perp_deploy_register_asset2, so we'll manually construct it
+# with the correct vaultAddress
+if False:  # SDK doesn't have this method
+    pass
 else:
     print("⚠️  SDK doesn't have perp_deploy_register_asset2")
     print("📝 Manually constructing registerAsset2 action...")
     
-    # Manually construct registerAsset2 action
+    # Use registerAsset (SDK method) - registerAsset2 doesn't exist in SDK
     action = {
         "type": "perpDeploy",
-        "registerAsset2": {
+        "registerAsset": {
+            "maxGas": None,
             "assetRequest": {
                 "coin": COIN,
                 "szDecimals": 2,
                 "oraclePx": INITIAL_ORACLE_PRICE,
                 "marginTableId": 1,
-                "marginMode": "strictIsolated",
+                "onlyIsolated": True,
             },
             "dex": DEX,
             "schema": {
@@ -108,19 +95,27 @@ else:
         }
     }
     
-    # Sign using Exchange's signing (same as SDK's perp_deploy_register_asset)
+    # Sign using Exchange's signing - CRITICAL: pass MASTER_ADDRESS as active_pool (vaultAddress)
     timestamp = get_timestamp_ms()
     signature = sign_l1_action(
-        exchange.wallet,  # agent wallet
+        exchange.wallet,  # agent wallet (signer)
         action,
-        None,  # active_pool
+        MASTER_ADDRESS,  # active_pool = vaultAddress (the account the action is for)
         timestamp,
         exchange.expires_after,
         exchange.base_url == constants.MAINNET_API_URL  # is_mainnet
     )
     
-    # Post using Exchange's _post_action
-    result = exchange._post_action(action, signature, timestamp)
+    # Post using Exchange's _post_action - but override vaultAddress to use MASTER_ADDRESS
+    # The SDK's _post_action uses exchange.vault_address, but we need MASTER_ADDRESS
+    payload = {
+        "action": action,
+        "nonce": timestamp,
+        "signature": signature,
+        "vaultAddress": MASTER_ADDRESS,  # CRITICAL: master account, not null
+        "expiresAfter": exchange.expires_after,
+    }
+    result = exchange.post("/exchange", payload)
 
 print("\n✅ Response:")
 print(json.dumps(result, indent=2))
