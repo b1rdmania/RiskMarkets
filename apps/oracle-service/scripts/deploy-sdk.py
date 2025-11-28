@@ -52,43 +52,70 @@ def deploy_with_sdk():
     print()
     
     # Initialize API wallet (agent) and Exchange
-    api_wallet = eth_account.Account.from_key(HL_API_PRIVATE_KEY)
-    print(f"✅ API wallet (agent): {api_wallet.address}")
-    print(f"✅ Master account: {HL_MASTER_ADDRESS}\n")
+    # Agent signs, master is the account we act on
+    agent_wallet = eth_account.Account.from_key(HL_API_PRIVATE_KEY)
+    print(f"✅ API wallet (agent - signer): {agent_wallet.address}")
+    print(f"✅ Master account (target): {HL_MASTER_ADDRESS}\n")
     
-    # Initialize Exchange with agent wallet and master account address
+    # Initialize Exchange: agent signs, master is the account
     exchange = Exchange(
-        api_wallet,
-        constants.TESTNET_API_URL,
-        account_address=HL_MASTER_ADDRESS  # Master account
+        wallet=agent_wallet,  # Agent signs
+        base_url=constants.TESTNET_API_URL,
+        account_address=HL_MASTER_ADDRESS  # Master is the target account
     )
     
     try:
-        # Use SDK's perp_deploy_register_asset method
-        # Note: SDK uses registerAsset (not registerAsset2), but let's try it
-        print("📝 Calling exchange.perp_deploy_register_asset...")
+        # SDK only has perp_deploy_register_asset (uses registerAsset, not registerAsset2)
+        # But we need registerAsset2 with marginMode
+        # So we'll manually construct registerAsset2 and use Exchange's _post_action
+        print("📝 Constructing registerAsset2 action...")
         print(f"   dex: {HL_DEX_NAME}")
         print(f"   coin: {HL_COIN_SYMBOL}")
         print(f"   sz_decimals: 2")
         print(f"   oracle_px: {INITIAL_ORACLE_PRICE}")
         print(f"   margin_table_id: 1")
-        print(f"   only_isolated: True")
+        print(f"   margin_mode: strictIsolated")
         print()
         
-        result = exchange.perp_deploy_register_asset(
-            dex=HL_DEX_NAME,
-            max_gas=None,  # Let SDK handle it
-            coin=HL_COIN_SYMBOL,
-            sz_decimals=2,
-            oracle_px=INITIAL_ORACLE_PRICE,
-            margin_table_id=1,
-            only_isolated=True,  # SDK uses only_isolated, not marginMode
-            schema={
-                'fullName': f'{HL_DEX_NAME} Test DEX',
-                'collateralToken': 0,
-                'oracleUpdater': HL_MASTER_ADDRESS.lower(),  # Master address
+        from hyperliquid.utils.signing import sign_l1_action
+        import time
+        
+        def get_timestamp_ms():
+            return int(time.time() * 1000)
+        
+        # Manually construct registerAsset2 action
+        action = {
+            "type": "perpDeploy",
+            "registerAsset2": {
+                "assetRequest": {
+                    "coin": HL_COIN_SYMBOL,
+                    "szDecimals": 2,
+                    "oraclePx": INITIAL_ORACLE_PRICE,
+                    "marginTableId": 1,
+                    "marginMode": "strictIsolated",
+                },
+                "dex": HL_DEX_NAME,
+                "schema": {
+                    "fullName": f"{HL_DEX_NAME} Test DEX",
+                    "collateralToken": 0,
+                    "oracleUpdater": HL_MASTER_ADDRESS.lower(),
+                }
             }
+        }
+        
+        # Sign using Exchange's signing (via sign_l1_action)
+        timestamp = get_timestamp_ms()
+        signature = sign_l1_action(
+            agent_wallet,
+            action,
+            None,  # active_pool
+            timestamp,
+            exchange.expires_after,
+            False  # is_mainnet
         )
+        
+        # Use Exchange's _post_action method (handles account_address correctly)
+        result = exchange._post_action(action, signature, timestamp)
         
         print("✅ Response:")
         print(json.dumps(result, indent=2))
