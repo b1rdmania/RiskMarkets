@@ -1,42 +1,44 @@
 # WAR.MARKET Oracle Service
 
-Backend service for fetching Pyth prices and publishing to Hyperliquid testnet.
+Backend service for fetching a Pyth price on testnet, computing a simple index, and publishing it to Hyperliquid.
 
 ## Setup
 
-1. Copy the example env file:
+1. **Create env file**
+
    ```bash
+   cd apps/oracle-service
    cp .env.testnet.example .env.testnet
    ```
 
-2. Fill in your credentials in `.env.testnet`:
+2. **Configure `.env.testnet`**
 
-### Pyth Feed ID
-- Get a Pyth feed ID from [Pyth Network](https://pyth.network/developers/price-feed-ids)
-- Common feeds:
-  - BTC/USD: `0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace`
-  - GOLD/USD: (check Pyth docs)
-  - WTI: (check Pyth docs)
+   Minimal fields:
 
-### Hyperliquid Testnet API Keys
-
-1. Go to [Hyperliquid Testnet API page](https://app.hyperliquid-testnet.xyz/API)
-2. Create an **API Wallet / API key** for your testnet account
-3. Save:
-   - `HL_API_KEY` - Your testnet API key
-   - `HL_API_SECRET` - Your testnet API secret
-   - `HL_MARKET_ID` - The market symbol you're publishing to (e.g., `GOLD-TEST`)
-
-4. Update `.env.testnet`:
    ```env
-   HL_API_KEY=<YOUR_TESTNET_API_KEY>
-   HL_API_SECRET=<YOUR_TESTNET_API_SECRET>
-   HL_MARKET_ID=<YOUR_MARKET_SYMBOL>
-   HL_ORACLE_ENDPOINT=/oracle/update
-   HL_PUBLISH_ENABLED=true
-   ```
+   NETWORK=testnet
 
-**Note:** The exact Hyperliquid oracle endpoint and payload structure may need verification with Hyperliquid documentation or support. The current implementation uses `/oracle/update` as a default, but this should be confirmed for HIP-3 markets.
+   # Pyth
+   PYTH_CLUSTER=pythnet
+   PYTH_API_URL=https://hermes-beta.pyth.network/api
+   PYTH_FEED_ID=<TESTNET_FEED_ID>
+
+   # Hyperliquid testnet
+   HL_TESTNET_URL=https://api.hyperliquid-testnet.xyz
+
+   # Builder wallet (single signer)
+   HL_MASTER_ADDRESS=<BUILDER_ADDRESS>
+   HL_MASTER_PRIVATE_KEY=<BUILDER_PRIVATE_KEY>
+
+   # HIP-3 market naming
+   HL_DEX_NAME=war
+   HL_COIN_SYMBOL=gdr
+
+   # Oracle loop
+   INITIAL_ORACLE_PRICE=100.0
+   PUBLISH_ENABLED=false
+   PUBLISH_INTERVAL_MS=3000
+   ```
 
 ## Running
 
@@ -45,24 +47,15 @@ npm install
 npm run dev
 ```
 
-Service will start on `http://localhost:4000`
+Service will start on `http://localhost:4000`.
 
 ## Endpoints
 
-- `GET /health` - Service health and current state
-- `GET /price` - Current index price
-- `GET /feeds` - List/search available Pyth feeds
-- `GET /feeds/:feedId` - Get metadata for a feed
-- `GET /feeds/:feedId/validate` - Validate a feed ID
+- **`GET /health`** – service health and current state
+- **`GET /price`** – current index price
+- **`GET /feeds`** – list/search available Pyth feeds
+- **`GET /feeds/:feedId`** – get metadata for a feed
+- **`GET /feeds/:feedId/validate`** – validate a feed ID
 
-## Environment Variables
+For more detail on the intended pipeline and HIP‑3 usage, see `docs/whitepaper-v0.2.md`.
 
-See `.env.testnet.example` for all available options.
-
-## Testing
-
-With the service running, test endpoints:
-```bash
-curl http://localhost:4000/health
-curl http://localhost:4000/price
-```

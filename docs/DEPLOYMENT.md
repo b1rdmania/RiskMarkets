@@ -1,167 +1,62 @@
-# Deployment Guide
+## Deployment Guide (Testnet)
 
-## Current Status
+### 1. Environment
 
-**✅ Fixed:**
-- `vaultAddress=MASTER_ADDRESS` correctly set in L1 action signing
-- `vaultAddress=MASTER_ADDRESS` included in payload sent to Hyperliquid
-- Signature recovery is consistent (agent wallet: `0x86C6...`)
-
-**⚠️ Current Issue:**
-- Hyperliquid returns: "User or API Wallet 0x86c672b3553576fa436539f21bd660f44ce10a86 does not exist"
-- This suggests an API wallet authorization issue, not a code issue
-
-## Setup
-
-### Environment Variables (`.env.testnet`)
+Create `apps/oracle-service/.env.testnet` (or use the example) with at least:
 
 ```env
 NETWORK=testnet
 
-# Pyth
-PYTH_HERMES_URL=https://hermes-beta.pyth.network/api
-PYTH_FEED_ID_XAU_USD=<feed-id>
+# Pyth (testnet)
+PYTH_CLUSTER=pythnet
+PYTH_API_URL=https://hermes-beta.pyth.network/api
+PYTH_FEED_ID=<TESTNET_FEED_ID>
 
-# Hyperliquid
-HL_API_URL=https://api.hyperliquid-testnet.xyz
-HL_MASTER_ADDRESS=0x47515db2eab01758c740ab220352a34b8d5a3826
-HL_MASTER_PRIVATE_KEY=<builder-wallet-private-key>  # master wallet private key (single-wallet model)
+# Hyperliquid testnet
+HL_TESTNET_URL=https://api.hyperliquid-testnet.xyz
 
-# HIP-3 Market
-HL_DEX_NAME=xau
-HL_COIN_SYMBOL=XAU-TEST
-HL_PUBLISH_ENABLED=false  # Set to true after market is deployed
+# Builder wallet (single signer)
+HL_MASTER_ADDRESS=<BUILDER_ADDRESS>
+HL_MASTER_PRIVATE_KEY=<BUILDER_PRIVATE_KEY>
+
+# HIP-3 naming
+HL_DEX_NAME=war
+HL_COIN_SYMBOL=gdr
+
+INITIAL_ORACLE_PRICE=100.0
+PUBLISH_ENABLED=false
 ```
 
-### Key Configuration
+### 2. Deploy a testnet market (HIP‑3)
 
-- **Master Account**: `0xC0D3...` - The account with funds, trading enabled
-- **API Wallet (Agent)**: `0x86C6...` - Signs actions on behalf of master account
-- **vaultAddress**: Must be set to `MASTER_ADDRESS` in L1 actions
+From `apps/oracle-service`:
 
-## Deployment Steps
+```bash
+NETWORK=testnet python3 scripts/deploy-register2.py
+```
 
-### 1. Deploy Market
+This sends a single `perpDeploy.registerAsset2` action using the builder wallet to attempt to create a new DEX + first asset on testnet.
+
+### 3. Run the oracle service
 
 ```bash
 cd apps/oracle-service
-NETWORK=testnet python3 scripts/deploy-correct.py
+npm install
+npm run dev
 ```
 
-This will:
-- Sign with the master wallet (`HL_MASTER_PRIVATE_KEY`)
-- Set `vaultAddress=MASTER_ADDRESS` in signature hash
-- Include `vaultAddress=MASTER_ADDRESS` in payload
-- Deploy `registerAsset` action to Hyperliquid
+With `PUBLISH_ENABLED=true` the service can be wired to periodically publish prices once the HIP‑3 market is live.
 
-### 2. Set Oracle Price
+### 4. Debugging
 
-```bash
-NETWORK=testnet python3 scripts/set-oracle.py 1924.5
-```
+- Check `scripts/deploy-register2.py` and `scripts/deploy-dex.py` for the exact actions used for deployment.
+- Use:
 
-Or from Node.js:
-```typescript
-// Automatically called by oracle service when HL_PUBLISH_ENABLED=true
-```
+  ```bash
+  curl http://localhost:4000/health
+  curl http://localhost:4000/price
+  ```
 
-### 3. Start Oracle Service
+  to inspect the local oracle service.
 
-```bash
-cd apps/oracle-service
-NETWORK=testnet npm run dev
-```
-
-## Troubleshooting
-
-### "User or API Wallet does not exist"
-
-1. **Verify API wallet authorization** in Hyperliquid Testnet UI
-   - Go to API settings
-   - Confirm API wallet `0x86C6...` is authorized
-   - Check it's not expired
-   - Verify it's associated with master account `0xC0D3...`
-
-2. **Verify master account**
-   - Trading enabled ✅
-   - Funds deposited ✅
-   - Account exists ✅
-
-3. **Check code**
-   - `vaultAddress=MASTER_ADDRESS` in signing ✅
-   - `vaultAddress=MASTER_ADDRESS` in payload ✅
-   - Agent wallet signs ✅
-
-## Code Structure
-
-### Deployment Script (`deploy-correct.py`)
-
-```python
-# Agent signs, master is the account
-agent_wallet = Account.from_key(HL_API_PRIVATE_KEY)
-exchange = Exchange(
-    wallet=agent_wallet,
-    base_url=constants.TESTNET_API_URL,
-    account_address=MASTER_ADDRESS
-)
-
-# Sign with vaultAddress=MASTER_ADDRESS
-signature = sign_l1_action(
-    agent_wallet,
-    action,
-    MASTER_ADDRESS,  # vaultAddress (critical!)
-    timestamp,
-    expires_after,
-    is_mainnet
-)
-
-# Payload includes vaultAddress
-payload = {
-    "action": action,
-    "nonce": timestamp,
-    "signature": signature,
-    "vaultAddress": MASTER_ADDRESS,  # critical!
-    "expiresAfter": None,
-}
-```
-
-### Oracle Script (`set-oracle.py`)
-
-Same pattern - agent signs, `vaultAddress=MASTER_ADDRESS`.
-
-## HIP-3 Market Types
-
-### Solo Market (Recommended for v0)
-
-Start with a **solo market** (single asset) rather than composite:
-- Simpler: matches v0 identity function (`index = pyth_price`)
-- Easier to debug: one feed, one price
-- Faster to test: less complexity
-
-**Suggested Test Markets:**
-- **GOLD/USD** (XAU/USD) - Stable, well-understood
-- **Swiss Franc (CHF/USD)** - FX pair, good liquidity
-- **BTC/USD** - Most liquid, easiest to test
-
-### Composite Market (Later)
-
-Once solo works, deploy composite markets:
-- **50% GOLD + 50% CHF** - Requires fetching two Pyth feeds and weighted average
-- Needs index calculation logic (beyond v0 identity function)
-
-## HIP-3 Prerequisites
-
-1. **1M staked HYPE** (may be waived on testnet - verify)
-2. **API Wallet** authorized and associated with master account
-3. **Market Definition**:
-   - Asset name (e.g., `XAU-TEST`)
-   - Oracle definition (points to your oracle service)
-   - Contract specifications (leverage, margin, etc.)
-   - Size decimals (recommended: $1-10 per unit at initial price)
-
-## References
-
-- [Hyperliquid HIP-3 Docs](https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/hip-3-deployer-actions)
-- [Hyperliquid Signing Docs](https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/signing)
-- [Hyperliquid Builder Tools](https://hyperliquid.gitbook.io/hyperliquid-docs/builder-tools/hypercore-tools)
 
