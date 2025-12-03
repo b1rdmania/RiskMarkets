@@ -1,0 +1,12 @@
+{
+  "treasury": "0x0000000000000000000000000000000000000000",
+  "feeBps": 5,
+  "liquidationFeeBps": 5,
+  "maxLeverage": 50,
+  "riskLimit": {
+    "oiCapUsd": 1000000
+  },
+  "markets": []
+}
+
+

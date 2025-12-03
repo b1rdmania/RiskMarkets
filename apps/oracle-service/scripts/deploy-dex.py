@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-Clean HIP-3 perp DEX + asset deployment using SDK-only path.
+HIP-3 perp DEX + asset deployment using the SDK's registerAsset helper.
 
 Usage:
     NETWORK=testnet python3 scripts/deploy-dex.py
 
 Behavior:
 - Uses ONE wallet as both signer and builder account:
-    HL_MASTER_ADDRESS == Account(HL_API_PRIVATE_KEY).address
+    HL_MASTER_ADDRESS == Account(HL_MASTER_PRIVATE_KEY).address
 - Uses Exchange.perp_deploy_register_asset (no manual sign_l1_action, no custom payload).
 """
 
@@ -33,9 +33,8 @@ def required(name: str) -> str:
 def main() -> None:
     try:
         from eth_account import Account
-        from hyperliquid.exchange import Exchange, get_timestamp_ms
+        from hyperliquid.exchange import Exchange
         from hyperliquid.utils import constants
-        from hyperliquid.utils.signing import sign_l1_action
     except ImportError as e:
         print(f"❌ Missing dependency: {e}")
         print("Install with: pip3 install hyperliquid-python-sdk python-dotenv eth-account")
@@ -45,22 +44,18 @@ def main() -> None:
     master_address = required("HL_MASTER_ADDRESS")
     master_private_key = required("HL_MASTER_PRIVATE_KEY")
 
-    # HIP-3 DEX naming for first-time deploy:
-    # - Env provides a human DEX tag (2–4 lowercase chars) and coin:
-    #     HL_DEX_NAME=war
-    #     HL_COIN_SYMBOL=gdr
-    # - For RegisterAsset2, `dex` is just the DEX tag ("war"), and `coin` is the asset ("gdr").
-    raw_dex = required("HL_DEX_NAME").lower()
+    # HIP-3 DEX naming:
+    # - HL_DEX_NAME: short 2–4 char lowercase dex tag, e.g. "war"
+    # - HL_COIN_SYMBOL: asset symbol, e.g. "gdr"
+    dex = required("HL_DEX_NAME").lower()
     coin = required("HL_COIN_SYMBOL")
-    dex = raw_dex
-    initial_oracle_price = os.getenv("INITIAL_ORACLE_PRICE", "1924.5")
+    initial_oracle_price = os.getenv("INITIAL_ORACLE_PRICE", "100.0")
 
     # Build wallet from private key
     wallet = Account.from_key(master_private_key)
 
-    print("🚀 HIP-3 DEX Deployment using RegisterAsset2 (first-time DEX init)")
-    print(f"   Human DEX tag:       {raw_dex}")
-    print(f"   DEX (HL short):      {dex}")
+    print("🚀 HIP-3 DEX Deployment via SDK (registerAsset)")
+    print(f"   DEX:                 {dex}")
     print(f"   Coin:                {coin}")
     print(f"   Initial oracle px:   {initial_oracle_price}")
     print()
@@ -72,7 +67,7 @@ def main() -> None:
     if wallet.address.lower() != master_address.lower():
         print("❌ HL_MASTER_ADDRESS must match the address derived from HL_MASTER_PRIVATE_KEY.")
         print("   Current values:")
-        print(f"   - HL_MASTER_ADDRESS:         {master_address}")
+        print(f"   - HL_MASTER_ADDRESS:           {master_address}")
         print(f"   - HL_MASTER_PRIVATE_KEY -> addr {wallet.address}")
         sys.exit(1)
 
@@ -87,59 +82,41 @@ def main() -> None:
     print(f"   account_address: {exchange.account_address}")
     print()
 
-    # Build RegisterAsset2 action: first-time DEX + asset registration.
+    # Schema metadata for the DEX.
     schema = {
         "fullName": f"{dex}:{coin} Test DEX",
         "collateralToken": 0,
         "oracleUpdater": wallet.address.lower(),
     }
 
-    print("📝 Calling RegisterAsset2 via signed L1 action...")
-    print(f"   dex (2-4 chars): {dex}")
+    print("📝 Calling exchange.perp_deploy_register_asset(...)")
+    print(f"   dex:             {dex}")
     print(f"   coin:            {coin}")
     print(f"   sz_decimals:     2")
     print(f"   oracle_px:       {initial_oracle_price}")
     print(f"   margin_table_id: 1")
-    print(f"   onlyIsolated:    True")
+    print(f"   only_isolated:   True")
     print(f"   schema:          {json.dumps(schema)}")
     print()
 
-    # Construct registerAsset2 action matching SDK's signing pattern as closely as possible.
-    timestamp = get_timestamp_ms()
-    action = {
-        "type": "perpDeploy",
-        "registerAsset2": {
-            "maxGas": 5_000_000,
-            "assetRequest": {
-                "coin": coin,
-                "szDecimals": 2,
-                "oraclePx": initial_oracle_price,
-                "marginTableId": 1,
-                # HIP-3 docs often use marginMode for registerAsset2.
-                "marginMode": "strictIsolated",
-            },
-            "dex": dex,
-            "schema": schema,
-        },
-    }
-
     try:
-        signature = sign_l1_action(
-            exchange.wallet,
-            action,
-            None,
-            timestamp,
-            exchange.expires_after,
-            exchange.base_url == constants.MAINNET_API_URL,
+        # max_gas: generous value; deployer auction will charge what it needs.
+        result = exchange.perp_deploy_register_asset(
+            dex=dex,
+            max_gas=5_000_000,
+            coin=coin,
+            sz_decimals=2,
+            oracle_px=initial_oracle_price,
+            margin_table_id=1,
+            only_isolated=True,
+            schema=schema,
         )
-
-        result = exchange._post_action(
-            action,
-            signature,
-            timestamp,
-        )
+    except AttributeError:
+        print("❌ Exchange.perp_deploy_register_asset is not available on this SDK version.")
+        print("   Please upgrade hyperliquid-python-sdk to the latest version and retry.")
+        sys.exit(1)
     except Exception as e:
-        print(f"❌ Error calling RegisterAsset2: {e}")
+        print(f"❌ Error calling perp_deploy_register_asset: {e}")
         import traceback
 
         traceback.print_exc()
@@ -150,12 +127,11 @@ def main() -> None:
 
     if isinstance(result, dict) and result.get("status") == "ok":
         print("\n🎉 perp_deploy_register_asset succeeded (DEX + asset created).")
-        print("   You can now enable HL_PUBLISH_ENABLED and wire up set_oracle using the same SDK path.")
     else:
         print("\n⚠️ perp_deploy_register_asset did not return status == 'ok'.")
-        print("   If the error is 'User or API Wallet 0x.... does not exist' with a random address,")
-        print("   send this exact script, your SDK version, and the response above to Hyperliquid.")
+        print("   Please share this script, your SDK version, and the response above with Hyperliquid if needed.")
 
 
 if __name__ == "__main__":
     main()
+

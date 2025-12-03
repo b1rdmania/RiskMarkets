@@ -1,0 +1,8 @@
+{
+  "name": "war_market_dex",
+  "version": "1.0.0",
+  "type": "perpDex",
+  "dex": "./dex.json"
+}
+
+
