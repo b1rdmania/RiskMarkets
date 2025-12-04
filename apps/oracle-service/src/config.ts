@@ -32,6 +32,7 @@ export interface ServiceConfig {
   staleThresholdMs: number;
   minPublishIntervalMs: number;
   priceChangeEpsilon: number;
+  indexScale: number;
 }
 
 function required(name: string, fallback?: string): string {
@@ -60,4 +61,5 @@ export const config: ServiceConfig = {
   staleThresholdMs: Number(process.env.STALE_THRESHOLD_MS ?? 10000),
   minPublishIntervalMs: Number(process.env.MIN_PUBLISH_INTERVAL_MS ?? 10000),
   priceChangeEpsilon: Number(process.env.PRICE_EPSILON ?? 0.01),
+  indexScale: Number(process.env.INDEX_SCALE ?? 40), // scale raw Pyth price down (e.g. 4000/40 ~= 100)
 };

@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 """
-HIP-3 perp DEX + asset deployment using the SDK's registerAsset helper.
+Register an additional HIP-3 asset on an existing perp DEX.
 
 Usage:
-    NETWORK=testnet python3 scripts/deploy-dex.py
+    NETWORK=testnet python3 scripts/deploy-asset.py
 
-Behavior:
-- Uses ONE wallet as both signer and builder account:
-    HL_MASTER_ADDRESS == Account(HL_MASTER_PRIVATE_KEY).address
-- Uses Exchange.perp_deploy_register_asset (no manual sign_l1_action, no custom payload).
+Assumes:
+  - The DEX already exists (e.g. created via deploy-dex.py).
+  - Single-wallet model: HL_MASTER_ADDRESS / HL_MASTER_PRIVATE_KEY.
+  - HL_DEX_NAME is the existing DEX tag (e.g. "wa").
+  - HL_COIN_SYMBOL is the NEW asset name (e.g. "ESV"), and the on-chain
+    coin id will be "<dex>:<ASSET_NAME>" (e.g. "wa:ESV").
 """
 
 import os
@@ -17,7 +19,6 @@ import json
 from dotenv import load_dotenv
 
 
-# Load environment (.env.testnet by default)
 env_file = os.getenv("ENV_FILE", ".env.testnet")
 load_dotenv(env_file)
 
@@ -40,27 +41,22 @@ def main() -> None:
         print("Install with: pip3 install hyperliquid-python-sdk python-dotenv eth-account")
         sys.exit(1)
 
-    # Single-wallet model: this is both the signer and the builder/master account.
     master_address = required("HL_MASTER_ADDRESS")
     master_private_key = required("HL_MASTER_PRIVATE_KEY")
 
-    # HIP-3 naming:
-    # - HL_DEX_NAME: short 2–4 char lowercase dex tag, e.g. "wa"
-    # - HL_COIN_SYMBOL: asset symbol, e.g. "GDR"
-    #   The on-chain coin name should be "{dex_name}:{ASSET_NAME}" where ASSET_NAME
-    #   is uppercase letters/digits only.
-    dex = required("HL_DEX_NAME").lower()
-    asset_name = required("HL_COIN_SYMBOL").upper()
+    dex = required("HL_DEX_NAME").lower()  # existing DEX, e.g. "wa"
+    asset_name = required("HL_COIN_SYMBOL").upper()  # new asset, e.g. "ESV"
     coin = f"{dex}:{asset_name}"
     initial_oracle_price = os.getenv("INITIAL_ORACLE_PRICE", "100.0")
+    sz_decimals_env = os.getenv("HL_SZ_DECIMALS", "").strip()
+    sz_decimals = int(sz_decimals_env) if sz_decimals_env else 2
     max_gas_env = os.getenv("HL_MAX_GAS", "").strip()
     max_gas = int(max_gas_env) if max_gas_env else None
 
-    # Build wallet from private key
     wallet = Account.from_key(master_private_key)
 
-    print("🚀 HIP-3 DEX Deployment via SDK (registerAsset)")
-    print(f"   DEX:                 {dex}")
+    print("🚀 HIP-3 additional asset deployment via SDK (registerAsset)")
+    print(f"   DEX (existing):      {dex}")
     print(f"   Asset name:          {asset_name}")
     print(f"   Coin (HL id):        {coin}")
     print(f"   Initial oracle px:   {initial_oracle_price}")
@@ -69,15 +65,12 @@ def main() -> None:
     print(f"✅ Master address env:  {master_address}")
     print()
 
-    # Enforce the "one wallet" invariant to avoid identity confusion.
     if wallet.address.lower() != master_address.lower():
         print("❌ HL_MASTER_ADDRESS must match the address derived from HL_MASTER_PRIVATE_KEY.")
-        print("   Current values:")
-        print(f"   - HL_MASTER_ADDRESS:           {master_address}")
-        print(f"   - HL_MASTER_PRIVATE_KEY -> addr {wallet.address}")
+        print(f"   HL_MASTER_ADDRESS:           {master_address}")
+        print(f"   HL_MASTER_PRIVATE_KEY -> addr {wallet.address}")
         sys.exit(1)
 
-    # Initialize Exchange: no account_address override, no vault, no manual signing.
     exchange = Exchange(
         wallet=wallet,
         base_url=constants.TESTNET_API_URL,
@@ -88,22 +81,18 @@ def main() -> None:
     print(f"   account_address: {exchange.account_address}")
     print()
 
-    # Schema metadata for the DEX.
-    schema = {
-        "fullName": f"{dex}:{asset_name} Test DEX",
-        "collateralToken": 0,
-        "oracleUpdater": wallet.address.lower(),
-    }
+    # For additional assets on an existing DEX, schema can be omitted.
+    schema = None
 
-    print("📝 Calling exchange.perp_deploy_register_asset(...)")
+    print("📝 Calling exchange.perp_deploy_register_asset(...) for NEW asset")
     print(f"   dex:             {dex}")
     print(f"   coin:            {coin}")
-    print(f"   sz_decimals:     2")
+    print(f"   sz_decimals:     {sz_decimals}")
     print(f"   oracle_px:       {initial_oracle_price}")
     print(f"   margin_table_id: 1")
     print(f"   only_isolated:   True")
     print(f"   max_gas:         {max_gas}")
-    print(f"   schema:          {json.dumps(schema)}")
+    print(f"   schema:          {schema}")
     print()
 
     try:
@@ -111,7 +100,7 @@ def main() -> None:
             dex=dex,
             max_gas=max_gas,
             coin=coin,
-            sz_decimals=2,
+            sz_decimals=sz_decimals,
             oracle_px=initial_oracle_price,
             margin_table_id=1,
             only_isolated=True,
@@ -132,12 +121,13 @@ def main() -> None:
     print(json.dumps(result, indent=2))
 
     if isinstance(result, dict) and result.get("status") == "ok":
-        print("\n🎉 perp_deploy_register_asset succeeded (DEX + asset created).")
+        print("\n🎉 Additional asset registered successfully on existing DEX.")
     else:
-        print("\n⚠️ perp_deploy_register_asset did not return status == 'ok'.")
+        print("\n⚠️ Additional asset registration did not return status == 'ok'.")
         print("   Please share this script, your SDK version, and the response above with Hyperliquid if needed.")
 
 
 if __name__ == "__main__":
     main()
+
 

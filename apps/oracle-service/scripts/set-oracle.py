@@ -33,8 +33,14 @@ except ImportError:
 # Get environment variables
 HL_MASTER_ADDRESS = os.getenv('HL_MASTER_ADDRESS')  # Master account
 HL_MASTER_PRIVATE_KEY = os.getenv('HL_MASTER_PRIVATE_KEY')  # Master wallet private key
-HL_DEX_NAME = os.getenv('HL_DEX_NAME', 'XAU')
-HL_COIN_SYMBOL = os.getenv('HL_COIN_SYMBOL', 'XAU-TEST')
+
+# HIP-3 naming:
+# - HL_DEX_NAME: short 2–4 char lowercase dex tag (e.g. "wa")
+# - HL_COIN_SYMBOL: base asset name (e.g. "GDR")
+HL_DEX_NAME = os.getenv('HL_DEX_NAME', 'wa').lower()
+HL_ASSET_NAME = os.getenv('HL_COIN_SYMBOL', 'GDR').upper()
+# On-chain coin identifier matches deployment: "{dex}:{ASSET_NAME}"
+HL_COIN_ID = f"{HL_DEX_NAME}:{HL_ASSET_NAME}"
 
 if not HL_MASTER_PRIVATE_KEY:
     print("❌ Error: Missing HL_MASTER_PRIVATE_KEY")
@@ -77,17 +83,18 @@ def set_oracle(price: str):
         print(f"   Got:      {api_wallet.address}")
         sys.exit(1)
     
-    print(f"✅ API wallet (agent): {api_wallet.address}")
-    print(f"✅ Master account: {HL_MASTER_ADDRESS}")
+    # Log to stderr so Node wrapper can safely parse stdout as pure JSON.
+    print(f"✅ API wallet (agent): {api_wallet.address}", file=sys.stderr)
+    print(f"✅ Master account: {HL_MASTER_ADDRESS}", file=sys.stderr)
     
     # Use SDK's sign_l1_action for canonical signing
     from hyperliquid.utils.signing import sign_l1_action
     from hyperliquid.exchange import get_timestamp_ms
     
-    # Build setOracle action
-    oracle_pxs_wire = sorted(list({HL_COIN_SYMBOL: price_str}.items()))
+    # Build setOracle action for this DEX + coin id
+    oracle_pxs_wire = sorted(list({HL_COIN_ID: price_str}.items()))
     mark_pxs_wire = []
-    external_perp_pxs_wire = sorted(list({HL_COIN_SYMBOL: price_str}.items()))
+    external_perp_pxs_wire = sorted(list({HL_COIN_ID: price_str}.items()))
     
     action = {
         "type": "perpDeploy",
@@ -120,13 +127,13 @@ def set_oracle(price: str):
     
     try:
         result = exchange.post("/exchange", payload)
-        
-        # Output JSON for Node.js to parse
+
+        # Output JSON for Node.js to parse (stdout must be JSON only).
         print(json.dumps({
-            'ok': result.get('status') == 'ok',
-            'status': result.get('status'),
-            'response': result.get('response'),
-            'price': price_str,
+            "ok": result.get("status") == "ok",
+            "status": result.get("status"),
+            "response": result.get("response"),
+            "price": price_str,
         }))
         
         if result.get('status') == 'ok':
@@ -136,9 +143,9 @@ def set_oracle(price: str):
             
     except Exception as e:
         print(json.dumps({
-            'ok': False,
-            'error': str(e),
-            'price': price_str,
+            "ok": False,
+            "error": str(e),
+            "price": price_str,
         }))
         sys.exit(1)
 

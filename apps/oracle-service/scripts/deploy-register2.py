@@ -59,7 +59,9 @@ def main() -> None:
     pk = required("HL_MASTER_PRIVATE_KEY")
     master_address = required("HL_MASTER_ADDRESS")
     dex = required("HL_DEX_NAME").lower()  # 2–4 lowercase chars
-    coin = required("HL_COIN_SYMBOL")
+    asset_name = required("HL_COIN_SYMBOL").upper()
+    # Per HIP-3 examples, coin identifier should be "{dex_name}:{ASSET_NAME}" (ASSET_NAME uppercase).
+    coin = f"{dex}:{asset_name}"
     initial_oracle_price = os.getenv("INITIAL_ORACLE_PRICE", "100.0")
 
     wallet = Account.from_key(pk)
@@ -67,7 +69,8 @@ def main() -> None:
     print("🚀 HIP-3 DEX Deployment via RegisterAsset2 (direct)")
     print(f"   Base URL:      {base_url}")
     print(f"   DEX tag:       {dex}")
-    print(f"   Coin:          {coin}")
+    print(f"   Asset name:    {asset_name}")
+    print(f"   Coin (HL id):  {coin}")
     print(f"   Oracle px:     {initial_oracle_price}")
     print()
     print(f"✅ Wallet (signer): {wallet.address}")

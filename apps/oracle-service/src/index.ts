@@ -56,6 +56,7 @@ app.get('/feeds/:feedId/validate', async (_req, res) => {
 async function main() {
   console.log(`[boot] WAR.MARKET oracle-service running on network=${config.network}`);
   console.log(`[boot] Using feed=${config.pythFeedId}`);
+  console.log(`[boot] Index scale=${config.indexScale}`);
   console.log(`[boot] Hyperliquid publish ${config.hlPublishEnabled ? 'ENABLED' : 'DISABLED'}`);
   
   // Validate feed ID on startup
@@ -74,7 +75,12 @@ async function main() {
   setInterval(async () => {
     try {
       const { value, timestamp } = await fetchPythPrice(config.pythFeedId);
-      priceState.value = value;
+
+      // Scale raw Pyth price into an index level suitable for the DEX.
+      // For example, XAUT ~ 4200 / 40 ~= 105.
+      const indexValue = value / config.indexScale;
+
+      priceState.value = indexValue;
       priceState.timestamp = timestamp;
       priceState.stale = Date.now() - timestamp > config.staleThresholdMs;
       priceState.lastError = undefined;
@@ -84,7 +90,7 @@ async function main() {
         return;
       }
 
-      const result = await publishToHyperliquid(value);
+      const result = await publishToHyperliquid(indexValue);
       if (result.skipped && result.reason) {
         console.log(`[HL] skipped publish: ${result.reason}`);
       }
