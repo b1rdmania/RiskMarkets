@@ -1,0 +1,27 @@
+{
+  "gdr": {
+    "coin": "wa:GDR1",
+    "mid": 100.0,
+    "spread_bps": 25,
+    "step_bps": 10,
+    "levels": 2,
+    "size": 0.01
+  },
+  "esv": {
+    "coin": "wa:ESV1",
+    "mid": 90.0,
+    "spread_bps": 25,
+    "step_bps": 10,
+    "levels": 2,
+    "size": 0.01
+  },
+  "shr": {
+    "coin": "wa:SHR1",
+    "mid": 75.0,
+    "spread_bps": 25,
+    "step_bps": 10,
+    "levels": 2,
+    "size": 0.01
+  }
+}
+

@@ -1,0 +1,28 @@
+[
+  {
+    "raw": 2000,
+    "expected": 50,
+    "expectPublish": true,
+    "timestamp": 0
+  },
+  {
+    "raw": 2005,
+    "expected": 50.125,
+    "expectPublish": true,
+    "timestamp": 3000
+  },
+  {
+    "raw": 2005.1,
+    "expected": 50.1275,
+    "expectPublish": false,
+    "timestamp": 6000
+  },
+  {
+    "raw": 2500,
+    "expected": 62.5,
+    "expectPublish": false,
+    "timestamp": 9000,
+    "expectSkipReason": "jump"
+  }
+]
+

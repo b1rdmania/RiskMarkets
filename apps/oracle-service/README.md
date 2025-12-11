@@ -45,9 +45,16 @@ Backend service for fetching a Pyth price on testnet, computing a simple index, 
 ```bash
 npm install
 npm run dev
+# Optional: run regression harness against fixtures
+npm run regression
 ```
 
 Service will start on `http://localhost:4000`.
+
+## Operational scripts
+- `scripts/halt-trading.py` — toggle haltTrading for a HIP-3 perp (use `--halted false` to re-enable).
+- `scripts/recycle_market.py` — push a static oracle price twice to revive a market before reseeding orders.
+- `scripts/seed-from-preset.py` — place symmetric bids/asks from `scripts/seed-presets.json` (per-index presets).
 
 ## Endpoints
 

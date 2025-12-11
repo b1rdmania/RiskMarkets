@@ -17,7 +17,7 @@
             justify-content: space-between;
             align-items: center;
             position: sticky;
-            top: 0;
+            top: 48px;
             z-index: 100;
         }
 
@@ -310,6 +310,49 @@
         .table tr:hover .index-tooltip {
             display: block;
         }
+
+        .env-banner {
+            position: sticky;
+            top: 0;
+            z-index: 120;
+            background: rgba(2, 255, 129, 0.08);
+            border-bottom: 1px solid rgba(2, 255, 129, 0.25);
+            padding: 10px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        .env-banner .env-label {
+            text-transform: uppercase;
+            color: var(--neon-green);
+            font-weight: 700;
+            letter-spacing: 0.08em;
+        }
+
+        .env-banner .env-api {
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .env-status {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .env-status.ok { color: var(--neon-green); }
+        .env-status.warn { color: var(--amber); }
+        .env-status.fail { color: var(--alert-red); }
+        .env-status.unknown { color: var(--text-secondary); }
+
+        .env-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
     </style>
 </head>
 <body>
@@ -317,6 +360,17 @@
     <div class="scan-line"></div>
     <!-- Subtle scanning label -->
     <div class="scanning-label" style="top: 80px; right: 50px;">MONITORING GLOBAL STRESS</div>
+
+    <div class="env-banner">
+        <div>
+            <div class="env-label" id="envLabel">TESTNET — INTERNAL ONLY</div>
+            <div class="env-api" id="envApi">API: not set | Index: --</div>
+        </div>
+        <div class="env-actions">
+            <span class="env-status unknown" id="envStatus">health: unknown</span>
+            <a href="docs/runbooks/testnet.md" class="nav-link" style="color: var(--neon-green);">Runbook</a>
+        </div>
+    </div>
 
     <!-- Top Bar -->
     <div class="top-bar">
@@ -465,6 +519,13 @@
     <script>
         const indexList = (window.WAR_MARKETS || []);
         const indexData = Object.fromEntries(indexList.map(m => [m.code, m]));
+        const params = new URLSearchParams(window.location.search);
+        const apiBaseParam = params.get('api');
+        const apiBase = apiBaseParam || localStorage.getItem('wm_api_base') || '';
+        if (apiBaseParam) {
+            localStorage.setItem('wm_api_base', apiBaseParam);
+        }
+        const focusIndex = (params.get('index') || (indexList[0]?.code ?? 'GDR')).toUpperCase();
 
         function renderMarkets() {
             const tbody = document.getElementById('marketsBody');
@@ -488,6 +549,7 @@
 
                 const tdPrice = document.createElement('td');
                 tdPrice.className = 'price';
+                tdPrice.dataset.indexCode = mkt.code;
                 tdPrice.textContent = mkt.price;
 
                 const tdChange = document.createElement('td');
@@ -520,6 +582,56 @@
             });
         }
 
+        function setEnvBanner() {
+            const envLabel = document.getElementById('envLabel');
+            const envApi = document.getElementById('envApi');
+            envLabel.textContent = `TESTNET — ${focusIndex}`;
+            envApi.textContent = apiBase ? `API: ${apiBase} | Index: ${focusIndex}` : `API: not set | Index: ${focusIndex}`;
+        }
+
+        function updateEnvStatus(text, level) {
+            const el = document.getElementById('envStatus');
+            el.textContent = text;
+            el.className = `env-status ${level}`;
+        }
+
+        function updatePriceCell(code, value) {
+            const cell = document.querySelector(`[data-index-code="${code}"]`);
+            if (!cell) return;
+            cell.textContent = `$${value.toFixed(2)}`;
+        }
+
+        function applyHealth(health) {
+            if (!health) {
+                updateEnvStatus('health: unavailable', 'warn');
+                return;
+            }
+            const stale = Boolean(health.stale);
+            const last = health.lastUpdate || 'n/a';
+            updateEnvStatus(stale ? `health: stale (${last})` : `health: ok (${last})`, stale ? 'warn' : 'ok');
+        }
+
+        async function refreshLiveData() {
+            if (!apiBase) {
+                updateEnvStatus('health: set ?api=URL', 'unknown');
+                return;
+            }
+            try {
+                const [priceResp, healthResp] = await Promise.all([
+                    fetch(`${apiBase}/price`).then(r => r.json()),
+                    fetch(`${apiBase}/health`).then(r => r.json()),
+                ]);
+
+                const rawValue = Number(priceResp.value ?? priceResp.index ?? priceResp?.source?.pyth);
+                if (Number.isFinite(rawValue)) {
+                    updatePriceCell(focusIndex, rawValue);
+                }
+                applyHealth(healthResp);
+            } catch (err) {
+                updateEnvStatus('health: error fetching', 'fail');
+            }
+        }
+
         function openDrawer(index) {
             const drawer = document.getElementById('tradingDrawer');
             const overlay = document.getElementById('drawerOverlay');
@@ -541,14 +653,19 @@
             overlay.classList.add('active');
         }
 
-        document.addEventListener('DOMContentLoaded', renderMarkets);
-
         function closeDrawer() {
             const drawer = document.getElementById('tradingDrawer');
             const overlay = document.getElementById('drawerOverlay');
             drawer.classList.remove('open');
             overlay.classList.remove('active');
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderMarkets();
+            setEnvBanner();
+            refreshLiveData();
+            setInterval(refreshLiveData, 5000);
+        });
 
         // Glitch effect every 12 seconds on ticker
         setInterval(() => {

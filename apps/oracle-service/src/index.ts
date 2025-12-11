@@ -4,6 +4,7 @@ import { fetchPythPrice } from './services/pyth';
 import { publishToHyperliquid } from './services/hyperliquid';
 import { fetchFeedMetadata, listAvailableFeeds, validateFeedId } from './services/pyth-metadata';
 import { priceState, publishStats } from './state';
+import { sanityCheckJump, scaleToIndex } from './pipeline';
 
 const app = express();
 app.use(express.json());
@@ -53,6 +54,8 @@ app.get('/feeds/:feedId/validate', async (_req, res) => {
   res.json({ feedId, valid: isValid });
 });
 
+let lastComputedIndex: number | null = null;
+
 async function main() {
   console.log(`[boot] WAR.MARKET oracle-service running on network=${config.network}`);
   console.log(`[boot] Using feed=${config.pythFeedId}`);
@@ -78,17 +81,27 @@ async function main() {
 
       // Scale raw Pyth price into an index level suitable for the DEX.
       // For example, XAUT ~ 4200 / 40 ~= 105.
-      const indexValue = value / config.indexScale;
+      const indexValue = scaleToIndex(value, config.indexScale);
 
-      priceState.value = indexValue;
-      priceState.timestamp = timestamp;
-      priceState.stale = Date.now() - timestamp > config.staleThresholdMs;
-      priceState.lastError = undefined;
+      const stale = Date.now() - timestamp > config.staleThresholdMs;
+      priceState.stale = stale;
 
-      if (priceState.stale) {
+      if (stale) {
         console.warn('[price] stale data detected, skipping publish');
         return;
       }
+
+      const jumpCheck = sanityCheckJump(lastComputedIndex, indexValue, config.maxJumpFraction);
+      if (!jumpCheck.ok) {
+        priceState.lastError = jumpCheck.reason;
+        console.warn(`[price] sanity check failed: ${jumpCheck.reason}`);
+        return;
+      }
+
+      priceState.value = indexValue;
+      priceState.timestamp = timestamp;
+      priceState.lastError = undefined;
+      lastComputedIndex = indexValue;
 
       const result = await publishToHyperliquid(indexValue);
       if (result.skipped && result.reason) {

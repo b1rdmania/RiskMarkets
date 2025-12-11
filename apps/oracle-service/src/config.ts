@@ -33,6 +33,7 @@ export interface ServiceConfig {
   minPublishIntervalMs: number;
   priceChangeEpsilon: number;
   indexScale: number;
+  maxJumpFraction: number;
 }
 
 function required(name: string, fallback?: string): string {
@@ -62,4 +63,5 @@ export const config: ServiceConfig = {
   minPublishIntervalMs: Number(process.env.MIN_PUBLISH_INTERVAL_MS ?? 10000),
   priceChangeEpsilon: Number(process.env.PRICE_EPSILON ?? 0.01),
   indexScale: Number(process.env.INDEX_SCALE ?? 40), // scale raw Pyth price down (e.g. 4000/40 ~= 100)
+  maxJumpFraction: Number(process.env.MAX_JUMP_FRACTION ?? 0.2), // 20% tick-to-tick guardrail
 };

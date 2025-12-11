@@ -1,8 +1,8 @@
-import { request } from 'undici';
 import { execSync } from 'child_process';
 import * as path from 'path';
 import { config } from '../config';
 import { publishStats } from '../state';
+import { shouldPublishValue } from '../pipeline';
 
 export interface PublishResult {
   ok: boolean;
@@ -13,23 +13,6 @@ export interface PublishResult {
 let lastPublishedValue: number | null = null;
 let lastPublishTimestamp = 0;
 
-function shouldPublish(nextValue: number, now: number): { publish: boolean; reason?: string } {
-  if (lastPublishedValue === null) {
-    return { publish: true };
-  }
-
-  const diff = Math.abs(nextValue - lastPublishedValue);
-  if (diff >= config.priceChangeEpsilon) {
-    return { publish: true };
-  }
-
-  if (now - lastPublishTimestamp >= config.minPublishIntervalMs) {
-    return { publish: true };
-  }
-
-  return { publish: false, reason: 'No material change' };
-}
-
 export async function publishToHyperliquid(value: number): Promise<PublishResult> {
   const now = Date.now();
 
@@ -37,7 +20,14 @@ export async function publishToHyperliquid(value: number): Promise<PublishResult
     return { ok: true, skipped: true, reason: 'HL publish disabled' };
   }
 
-  const { publish, reason } = shouldPublish(value, now);
+  const { publish, reason } = shouldPublishValue(
+    value,
+    lastPublishedValue,
+    lastPublishTimestamp,
+    now,
+    config.priceChangeEpsilon,
+    config.minPublishIntervalMs
+  );
   if (!publish) {
     return { ok: true, skipped: true, reason };
   }
